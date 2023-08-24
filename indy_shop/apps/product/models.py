@@ -1,5 +1,5 @@
 from django.db import models
-from apps.account import User
+from apps.account.models import User
 # Create your models here.
 
 
@@ -9,8 +9,8 @@ class Category(models.Model):
     slug = models.SlugField()
 
     class Meta:
-        related_name = 'Категория'
-        related_name_plural = 'Категорий'
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категорий'
 
     def __str__(self):
         return self.name
@@ -22,7 +22,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     stock_count = models.IntegerField()
-    category = models.ForeignKey(
+    category_id = models.ForeignKey(
         Category, 
         verbose_name="Категория",
         on_delete=models.PROTECT,
@@ -40,7 +40,7 @@ class Product(models.Model):
 
 # Model for Product Image
 class ProductImage(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_image_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_images')
     image = models.ImageField()
     is_main = models.BooleanField(default=False)
 
@@ -48,8 +48,8 @@ class ProductImage(models.Model):
         return f"Image for {self.product.title}"
 
 # Model for Order
-class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class Orders(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
     total_amount = models.IntegerField()
     status = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -59,8 +59,8 @@ class Order(models.Model):
 
 # Model for Order Item
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order_id = models.ForeignKey(Orders, on_delete=models.CASCADE, related_name='order_items')
+    order_item_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items')
     quantity = models.IntegerField()
     update_at = models.DateTimeField(auto_now=True)
 

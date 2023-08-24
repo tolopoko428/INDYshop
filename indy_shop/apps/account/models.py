@@ -1,17 +1,53 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 # Create your models here.
-
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import BaseUserManager
 
 # Model for User
+class UserManager(BaseUserManager):
+    def create_user(self, email=None, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The given email must be set')
+        
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        """
+        Create and save a SuperUser with the given email and password.
+        """
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        return self.create_user(email, password, **extra_fields)
+
+
 class User(AbstractUser):
-    login = models.CharField(max_length=100, null=False)
-    email = models.EmailField(null=False)
-    password = models.CharField(max_length=100, null=False)
-    avatar = models.ImageField(upload_to='avatar/', null=True, blank=True)
-    mobile = models.CharField(max_length=15, null=True, blank=True)
-    address = models.CharField(max_length=200, null=True, blank=True)
+    username = None
+    email = models.EmailField("Электронная почта", unique=True)
+    address = models.CharField("Адрес", max_length=100, null=True, blank=True)
+    mobile = models.CharField("Телефон", max_length=15, null=True, blank=True)
+    
+    USERNAME_FIELD = 'email' # Какое поле будет использоваться в логинке
+    REQUIRED_FIELDS = []
+
+    objects = UserManager()
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
 
     def __str__(self):
-        return self.login
+        return self.email
+    
 
