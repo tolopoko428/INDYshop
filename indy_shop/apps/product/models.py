@@ -7,15 +7,16 @@ from apps.account.models import User
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField()
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Категория'
-        verbose_name_plural = 'Категорий'
+        verbose_name_plural = 'Категории'
 
     def __str__(self):
         return self.name
 
-# Model for Product
+#Model for Product
 class Product(models.Model):
     title = models.CharField(max_length=200, null=False)
     description = models.TextField(blank=True, null=True)
@@ -23,21 +24,18 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     stock_count = models.IntegerField(blank=True, null=True)
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
-    category_id = models.ForeignKey(
-        Category, 
-        verbose_name="Категория",
-        on_delete=models.PROTECT,
-        related_name="products"
-        )
+    is_new = models.BooleanField(default=False)
+    is_top = models.BooleanField(default=False)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
-        ordering = ["-created_at"]
-
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.title
+    
 
 # Model for Product Image
 class ProductImage(models.Model):
