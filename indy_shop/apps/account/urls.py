@@ -3,7 +3,8 @@ from apps.account import views
 
 
 urlpatterns = [
-    path('registration/', views.register, name = 'register'),
-    path('index/', views.index, name='index')
+    path('registration/', views.register_user, name = 'register'),
+    path('login/', views.LoginView.as_view(), name = 'login'),
+    path('index/', views.index, name='index'),
 ]
 

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>Добавить продукт</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {{ form.errors }}  <!-- Отобразите ошибки формы здесь -->
+    <input type="file" name="images" accept="image/*" multiple>  <!-- Добавьте поле для загрузки изображений, установите атрибут "multiple", чтобы позволить выбирать несколько изображений -->
+    <input type="submit" value="Добавить продукт">
+</form>
+{% endblock %}

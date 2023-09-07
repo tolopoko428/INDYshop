@@ -18,10 +18,11 @@ class Category(models.Model):
 # Model for Product
 class Product(models.Model):
     title = models.CharField(max_length=200, null=False)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    stock_count = models.IntegerField()
+    stock_count = models.IntegerField(blank=True, null=True)
+    image = models.ImageField(upload_to='product_images/', blank=True, null=True)
     category_id = models.ForeignKey(
         Category, 
         verbose_name="Категория",
@@ -41,7 +42,7 @@ class Product(models.Model):
 # Model for Product Image
 class ProductImage(models.Model):
     product_image_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_images')
-    image = models.ImageField()
+    images = models.ImageField()
     is_main = models.BooleanField(default=False)
 
     def __str__(self):

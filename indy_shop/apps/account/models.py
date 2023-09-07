@@ -5,11 +5,12 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 
 # Model for User
+from django.contrib.auth.base_user import BaseUserManager
+
 class UserManager(BaseUserManager):
     def create_user(self, email=None, password=None, **extra_fields):
         if not email:
             raise ValueError('The given email must be set')
-        
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -29,6 +30,8 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         return self.create_user(email, password, **extra_fields)
+
+
 
 
 class User(AbstractUser):
