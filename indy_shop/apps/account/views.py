@@ -17,7 +17,6 @@ class LoginView(FormView):
     def form_valid(self, form):
         data = form.cleaned_data #{"password":"admin", "email":"admin@gmail.com"}
         # cleaned_data хранилище данных из формы в виде dict
-        print(data)
         email = data["email"]
         password = data["password"]
         user = authenticate(email=email,password=password)
@@ -55,11 +54,6 @@ def register_user(request):
     
     context = {'form':form}
     return render(request, template_name, context)
-
-
-
-def registration_done(request):
-    return render(request, 'registration_done.html')
 
 
 def index(request):
