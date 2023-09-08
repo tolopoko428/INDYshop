@@ -11,4 +11,4 @@ class CreateProductForm(forms.ModelForm):
     class Meta:
         model = Product
         exclude = []
-        fields = ['title', 'description', 'price', "category_id"]
+        fields = ['title', 'description', 'price', "category_id", "image"]

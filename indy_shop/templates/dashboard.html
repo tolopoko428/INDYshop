@@ -38,7 +38,7 @@
 								        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Детали Аккаунта</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
+								        <a class="nav-link-logout" href="{% url 'logout' %}">Выйти</a>
 								    </li>
 								</ul>
 	                		</aside><!-- End .col-lg-3 -->
@@ -53,7 +53,7 @@
 
 								    <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
 								    	<p>У вас нету заказов</p>
-								    	<a href="category.html" class="btn btn-outline-primary-2"><span>В Магазин</span><i class="icon-long-arrow-right"></i></a>
+								    	<a href="{% url 'empty-paht' %}" class="btn btn-outline-primary-2"><span>В Магазин</span><i class="icon-long-arrow-right"></i></a>
 								    </div><!-- .End .tab-pane -->
 
 								    <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
@@ -78,9 +78,9 @@
                                                             <a href="{% url 'edit_address' %}">Редактировать <i class="icon-edit"></i></a></p>
                                                         {% else %}
                                                             <p>У вас не добавлен адрес доставки!<br>
-                                                            <a href="">Добавить <i class="icon-plus"></i></a></p>
+                                                            <a href="{% url 'edit_address' %}">Добавить <i class="icon-plus"></i></a></p>
                                                         {% endif %}
-                                                        
+
                                                     </div><!-- End .card-body -->                                                    
 								    			</div><!-- End .card-dashboard -->
 								    		</div><!-- End .col-lg-6 -->
@@ -306,5 +306,16 @@
     .page-header{
         background-image:  url("{% static 'assets/images/page-header-bg.jpg' %}")
     } 
+
+    .nav-dashboard .nav-link-logout {
+    overflow: hidden;
+    position: relative;
+    font-weight: 300;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    padding: 1.4rem 0;
+    color: #b35454;
+    border-bottom: 0.1rem solid #ebebeb;
+}
 </style>
 {% endblock %}

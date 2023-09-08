@@ -51,7 +51,7 @@
                                             {% if product.is_new %}
                                             <span class="product-label label-new">New</span>
                                             {% endif %}
-                                            <a href="#">
+                                            <a href="{% url 'product_detail' product.pk %}">
                                                 {% if product.image %}
                                                 <img src="{{ product.image.url }}" alt="{{ product.title }}" class="product-image">
                                                 {% else %}
@@ -59,13 +59,13 @@
                                                 {% endif %}
                                             </a>
                                         <div class="product-action-vertical">
-                                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+                                            <a href="" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
                                         </div><!-- End .product-action -->
 
                                         <div class="product-action action-icon-top">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-                                            <a href="#" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                                            <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
+                                            <a href="" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
+                                            <a href="" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
                                         </div><!-- End .product-action -->
                                     </figure><!-- End .product-media -->
 
@@ -73,7 +73,7 @@
                                         <div class="product-cat">
                                             <a>{{ product.category.name }}</a>
                                         </div><!-- End .product-cat -->
-                                        <h3 class="product-title"><a href="#">{{ product.title }}</a></h3><!-- End .product-title -->
+                                        <h3 class="product-title"><a href="{% url 'product_detail' product.pk %}">{{ product.title }}</a></h3><!-- End .product-title -->
                                         <div class="product-price">
                                             ${{ product.price }}
                                         </div><!-- End .product-price -->
@@ -92,9 +92,6 @@
                             </div><!-- End .col-6 col-md-4 col-lg-4 col-xl-3 -->
                             {% endfor %}
                         </div><!-- End .row -->
-                        <div class="load-more-container text-center">
-                            <a href="#" class="btn btn-outline-darker btn-load-more">More Products <i class="icon-refresh"></i></a>
-                        </div><!-- End .load-more-container -->
                     </div><!-- End .products -->
 
                     <div class="sidebar-filter-overlay"></div><!-- End .sidebar-filter-overlay -->

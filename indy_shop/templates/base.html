@@ -55,7 +55,7 @@
                                         {% if request.user.is_authenticated %}
                                             <a href="{% url 'profile' %}"><i class="icon-user"></i>{{ request.user.email }}</a>
                                         {% else %}
-                                            <a href="{% url 'login' %}" data-toggle="modal">Войти</a>
+                                            <a href="{% url 'login' %}">Войти</a>
                                         {% endif %}
                                     </li>
                                     
@@ -391,6 +391,6 @@
     <script src="{% static 'assets/js/nouislider.min.js' %}"></script>
     <!-- Main JS File -->
     <script src="{% static 'assets/js/main.js' %}"></script>
-    
+
 </body>
 </html>

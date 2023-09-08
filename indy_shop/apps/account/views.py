@@ -102,7 +102,7 @@ def update_profile(request):
 @login_required
 def edit_address(request):
     user = request.user
-
+    template_name = 'edit_address.html'
     if request.method == 'POST':
         form = AddressForm(request.POST, instance=user)
         if form.is_valid():
@@ -112,4 +112,4 @@ def edit_address(request):
     else:
         form = AddressForm(instance=user)
     
-    return render(request, 'edit_address.html', {'form': form})
+    return render(request, template_name, {'form': form})

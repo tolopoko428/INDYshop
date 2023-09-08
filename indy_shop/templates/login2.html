@@ -27,7 +27,7 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="signin-2" role="tabpanel" aria-labelledby="signin-tab-2">
-                                <form method="post" action="{% url 'login' %}">
+                                <form method="post" action="">
                                     {% csrf_token %}
                                     {{ form.email.label_tag }}
                                     {{ form.email }}
@@ -62,7 +62,7 @@
                                 </div><!-- End .form-choice -->
                             </div><!-- .End .tab-pane -->
                             <div class="tab-pane fade" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-                                <form method="post" action="{% url 'registration' %}">
+                                <form method="post" action="">
                                     {% csrf_token %}
                                     {{ form.email.label_tag }}
                                     {{ form.email }}
