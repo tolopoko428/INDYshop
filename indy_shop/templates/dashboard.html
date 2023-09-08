@@ -13,9 +13,8 @@
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Shop</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">My Account</li>
+                        <li class="breadcrumb-item"><a href="{% url 'empty-paht' %}">Дом</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Мой Аккаунт</li>
                     </ol>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
@@ -27,22 +26,19 @@
 	                		<aside class="col-md-4 col-lg-3">
 	                			<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
 								    <li class="nav-item">
-								        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
+								        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Понель</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Заказы</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false">Downloads</a>
+								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Адрес</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
+								        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Детали Аккаунта</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" href="#">Sign Out</a>
+								        <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
 								    </li>
 								</ul>
 	                		</aside><!-- End .col-lg-3 -->
@@ -56,25 +52,18 @@
 								    </div><!-- .End .tab-pane -->
 
 								    <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
-								    	<p>No order has been made yet.</p>
-								    	<a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
-								    </div><!-- .End .tab-pane -->
-
-								    <div class="tab-pane fade" id="tab-downloads" role="tabpanel" aria-labelledby="tab-downloads-link">
-								    	<p>No downloads available yet.</p>
-								    	<a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
+								    	<p>У вас нету заказов</p>
+								    	<a href="category.html" class="btn btn-outline-primary-2"><span>В Магазин</span><i class="icon-long-arrow-right"></i></a>
 								    </div><!-- .End .tab-pane -->
 
 								    <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
-								    	<p>The following addresses will be used on the checkout page by default.</p>
-
 								    	<div class="row">
 								    		<div class="col-lg-6">
 								    			<div class="card card-dashboard">
 								    				<div class="card-body">
-								    					<h3 class="card-title">Billing Address</h3><!-- End .card-title -->
+								    					<h3 class="card-title">Электронный Адрес</h3><!-- End .card-title -->
 														{{request.user.email}}<br>
-														<a href="#">Забыли Пароль? <i class="icon-edit"></i></a></p>
+														<a href="#">Редактировать Профиль <i class="icon-edit"></i></a></p>
 								    				</div><!-- End .card-body -->
 								    			</div><!-- End .card-dashboard -->
 								    		</div><!-- End .col-lg-6 -->
@@ -82,51 +71,51 @@
 								    		<div class="col-lg-6">
 								    			<div class="card card-dashboard">
 								    				<div class="card-body">
-								    					<h3 class="card-title">Shipping Address</h3><!-- End .card-title -->
-
-														<p>You have not set up this type of address yet.<br>
-														<a href="#">Edit <i class="icon-edit"></i></a></p>
-								    				</div><!-- End .card-body -->
+                                                        <h3 class="card-title">Адрес Доставки</h3><!-- End .card-title -->
+                                                        
+                                                        {% if user.address %}
+                                                            <p>{{ user.address }}<br>
+                                                            <a href="{% url 'edit_address' %}">Редактировать <i class="icon-edit"></i></a></p>
+                                                        {% else %}
+                                                            <p>У вас не добавлен адрес доставки!<br>
+                                                            <a href="">Добавить <i class="icon-plus"></i></a></p>
+                                                        {% endif %}
+                                                        
+                                                    </div><!-- End .card-body -->                                                    
 								    			</div><!-- End .card-dashboard -->
 								    		</div><!-- End .col-lg-6 -->
 								    	</div><!-- End .row -->
 								    </div><!-- .End .tab-pane -->
 
 								    <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
-								    	<form action="#">
-			                				<div class="row">
-			                					<div class="col-sm-6">
-			                						<label>First Name *</label>
-			                						<input type="text" class="form-control" required>
-			                					</div><!-- End .col-sm-6 -->
-
-			                					<div class="col-sm-6">
-			                						<label>Last Name *</label>
-			                						<input type="text" class="form-control" required>
-			                					</div><!-- End .col-sm-6 -->
-			                				</div><!-- End .row -->
-
-		            						<label>Display Name *</label>
-		            						<input type="text" class="form-control" required>
-		            						<small class="form-text">This will be how your name will be displayed in the account section and in reviews</small>
-
-		                					<label>Email address *</label>
-		        							<input type="email" class="form-control" required>
-
-		            						<label>Current password (leave blank to leave unchanged)</label>
-		            						<input type="password" class="form-control">
-
-		            						<label>New password (leave blank to leave unchanged)</label>
-		            						<input type="password" class="form-control">
-
-		            						<label>Confirm new password</label>
-		            						<input type="password" class="form-control mb-2">
-
-		                					<button type="submit" class="btn btn-outline-primary-2">
-			                					<span>SAVE CHANGES</span>
-			            						<i class="icon-long-arrow-right"></i>
-			                				</button>
-			                			</form>
+								    	<form method="post">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                                                    {{ form.first_name }}
+                                                </div><!-- End .col-sm-6 -->
+                                        
+                                                <div class="col-sm-6">
+                                                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                                                    {{ form.last_name }}
+                                                </div><!-- End .col-sm-6 -->
+                                            </div><!-- End .row -->
+                                        
+                                            <label for="{{ form.email.id_for_label }}">Email address</label>
+                                            {{ form.email }}
+                                        
+                                            <label for="{{ form.current_password.id_for_label }}">Current password (leave blank to leave unchanged)</label>
+                                            {{ form.current_password }}
+                                        
+                                            <label for="{{ form.new_password.id_for_label }}">New password (leave blank to leave unchanged)</label>
+                                            {{ form.new_password }}
+                                        
+                                            <button type="submit" class="btn btn-outline-primary-2">
+                                                <span>SAVE CHANGES</span>
+                                                <i class="icon-long-arrow-right"></i>
+                                            </button>
+                                        </form>                                                                                
 								    </div><!-- .End .tab-pane -->
 								</div>
 	                		</div><!-- End .col-lg-9 -->

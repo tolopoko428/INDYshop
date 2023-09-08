@@ -60,3 +60,13 @@ class UpdateProfileForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['address']  # Укажите все поля, которые вы хотите редактировать
+
+    def __init__(self, *args, **kwargs):
+        super(AddressForm, self).__init__(*args, **kwargs)
+        self.fields['address'].widget.attrs.update({'class': 'form-control'})
