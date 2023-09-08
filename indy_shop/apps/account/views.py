@@ -23,7 +23,7 @@ class LoginView(FormView):
         if user is not None:
             if user.is_active:
                 login(self.request, user)
-                return redirect("index")
+                return redirect("empty-paht")
             return HttpResponse("Ваш аккаунт не активен!")
         return HttpResponse("Введенные вами данные некорректные!")
 
@@ -50,7 +50,7 @@ def register_user(request):
             user.set_password(password)
             user.save()
             login(request, user)
-            return redirect("base.html")
+            return redirect("empty-paht")
     
     context = {'form':form}
     return render(request, template_name, context)

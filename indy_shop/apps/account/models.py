@@ -36,19 +36,20 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     username = None
-    email = models.EmailField("Электронная почта", unique=True)
-    address = models.CharField("Адрес", max_length=100, null=True, blank=True)
-    mobile = models.CharField("Телефон", max_length=15, null=True, blank=True)
+    first_name = models.CharField(max_length=30)  # Add max_length here
+    last_name = models.CharField(max_length=30)   # Add max_length here
+    email = models.EmailField(("Электронная почта"), unique=True)
+    address = models.CharField(("Адрес"), max_length=100, null=True, blank=True)
+    mobile = models.CharField(("Телефон"), max_length=15, null=True, blank=True)
     
-    USERNAME_FIELD = 'email' # Какое поле будет использоваться в логинке
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']  # Add 'email' here
 
     objects = UserManager()
 
     class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
-
+        verbose_name = ("Пользователь")
+        verbose_name_plural = ("Пользователи")
 
     def __str__(self):
         return self.email
