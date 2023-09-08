@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 
 from apps.account.models import User
 
@@ -27,3 +27,36 @@ class UserRegisterForm(UserCreationForm):
             "first_name", 
             "last_name",
             ]
+        
+
+
+class UpdateProfileForm(forms.ModelForm):
+    current_password = forms.CharField(
+        label='Текущий пароль',
+        widget=forms.PasswordInput,
+        required=True
+    )
+    new_password = forms.CharField(
+        label='Новый пароль',
+        widget=forms.PasswordInput,
+        required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'address', 'mobile']
+
+    def clean_current_password(self):
+        current_password = self.cleaned_data.get('current_password')
+        if not self.instance.check_password(current_password):
+            raise forms.ValidationError('Неправильный текущий пароль')
+        return current_password
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        new_password = self.cleaned_data.get('new_password')
+        if new_password:
+            user.set_password(new_password)
+        if commit:
+            user.save()
+        return user

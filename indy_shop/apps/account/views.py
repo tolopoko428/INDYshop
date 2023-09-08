@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
-
-from django.views.generic import FormView, CreateView, TemplateView
+from django.views.generic import FormView
 from django.contrib.auth import login, logout, authenticate
 from django.urls import reverse_lazy
 from django.http import HttpResponse
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-from apps.account.forms import LoginForm, UserRegisterForm
+from apps.account.forms import LoginForm, UserRegisterForm, UpdateProfileForm
 from apps.account.models import User
 
 
@@ -61,3 +62,18 @@ def index(request):
     return render(request, template_name)
 
 
+
+@login_required
+def update_profile(request):
+    template_name = 'dashboard.html'
+    if request.method == 'POST':
+        form = UpdateProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Ваш профиль был успешно обновлен.')
+            return redirect('dashboard')
+    else:
+        form = UpdateProfileForm(instance=request.user)
+    
+    context = {'form': form}
+    return render(request, template_name, context)
