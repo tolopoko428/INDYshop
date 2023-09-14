@@ -2,183 +2,63 @@
 {% load static %}
 {% block content %}
 
-<body>
+
+<body class>
     <div class="page-wrapper">
         <main class="main">
-            <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Contact us</li>
+                        <li class="breadcrumb-item"><a href="{% url 'empty-paht' %}">Дом</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Админ</li>
                     </ol>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
-            <div class="container">
-	        	<div class="page-header page-header-big text-center">
-        			<h1 class="page-title text-white">Contact us<span class="text-white">keep in touch with us</span></h1>
-	        	</div><!-- End .page-header -->
-            </div><!-- End .container -->
-
-            <div class="page-content pb-0">
+            <a class="icon-user" style="text-align: center; display: block;">Админ Понель</a>
+            <div class="page-content">
                 <div class="container">
-                	<div class="row">
-                		<div class="col-lg-6 mb-2 mb-lg-0">
-                			<h2 class="title mb-1">Контактная Информация</h2><!-- End .title mb-2 -->
-                			<p class="mb-3">Адрес:
-                                123 Улица Пример, Город, Регион, Почтовый индекс
-                                
-                                Номер телефона:
-                                +7 (123) 456-7890
-                                
-                                Электронная почта:
-                                info@yourcompany.com
-                                
-                                График работы:
-                                Понедельник-пятница: 9:00 - 18:00
-                                Суббота: 10:00 - 14:00
-                                Воскресенье: Выходной
-                                
-                                Форма обратной связи:
-                                [Оставить сообщение](ссылка на форму обратной связи)</p>
-                			<div class="row">
-                				<div class="col-sm-7">
-                					<div class="contact-info">
-                						<h3>The Office</h3>
-
-                						<ul class="contact-list">
-                							<li>
-                								<i class="icon-map-marker"></i>
-	                							70 Washington Square South New York, NY 10012, United States
-	                						</li>
-                							<li>
-                								<i class="icon-phone"></i>
-                								<a href="tel:#">+92 423 567</a>
-                							</li>
-                							<li>
-                								<i class="icon-envelope"></i>
-                								<a href="mailto:#">info@Molla.com</a>
-                							</li>
-                						</ul><!-- End .contact-list -->
-                					</div><!-- End .contact-info -->
-                				</div><!-- End .col-sm-7 -->
-
-                				<div class="col-sm-5">
-                					<div class="contact-info">
-                						<h3>The Office</h3>
-
-                						<ul class="contact-list">
-                							<li>
-                								<i class="icon-clock-o"></i>
-	                							<span class="text-dark">Monday-Saturday</span> <br>11am-7pm ET
-	                						</li>
-                							<li>
-                								<i class="icon-calendar"></i>
-                								<span class="text-dark">Sunday</span> <br>11am-6pm ET
-                							</li>
-                						</ul><!-- End .contact-list -->
-                					</div><!-- End .contact-info -->
-                				</div><!-- End .col-sm-5 -->
-                			</div><!-- End .row -->
-                		</div><!-- End .col-lg-6 -->
-                		<div class="col-lg-6">
-                			<h2 class="title mb-1">Got Any Questions?</h2><!-- End .title mb-2 -->
-                			<p class="mb-2">Use the form below to get in touch with the sales team</p>
-
-                			<form action="#" class="contact-form mb-3">
-                				<div class="row">
-                					<div class="col-sm-6">
-                                        <label for="cname" class="sr-only">Name</label>
-                						<input type="text" class="form-control" id="cname" placeholder="Name *" required>
-                					</div><!-- End .col-sm-6 -->
-
-                					<div class="col-sm-6">
-                                        <label for="cemail" class="sr-only">Email</label>
-                						<input type="email" class="form-control" id="cemail" placeholder="Email *" required>
-                					</div><!-- End .col-sm-6 -->
-                				</div><!-- End .row -->
-
-                				<div class="row">
-                					<div class="col-sm-6">
-                                        <label for="cphone" class="sr-only">Phone</label>
-                						<input type="tel" class="form-control" id="cphone" placeholder="Phone">
-                					</div><!-- End .col-sm-6 -->
-
-                					<div class="col-sm-6">
-                                        <label for="csubject" class="sr-only">Subject</label>
-                						<input type="text" class="form-control" id="csubject" placeholder="Subject">
-                					</div><!-- End .col-sm-6 -->
-                				</div><!-- End .row -->
-
-                                <label for="cmessage" class="sr-only">Message</label>
-                				<textarea class="form-control" cols="30" rows="4" id="cmessage" required placeholder="Message *"></textarea>
-
-                				<button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
-                					<span>SUBMIT</span>
-            						<i class="icon-long-arrow-right"></i>
-                				</button>
-                			</form><!-- End .contact-form -->
-                		</div><!-- End .col-lg-6 -->
-                	</div><!-- End .row -->
-
-                	<hr class="mt-4 mb-5">
-
-                	<div class="stores mb-4 mb-lg-5">
-	                	<h2 class="title text-center mb-3">Our Stores</h2><!-- End .title text-center mb-2 -->
-
-	                	<div class="row">
-	                		<div class="col-lg-6">
-	                			<div class="store">
-	                				<div class="row">
-	                					<div class="col-sm-5 col-xl-6">
-	                						<figure class="store-media mb-2 mb-lg-0">
-	                							<img src="{% static 'assets/images/stores/img-1.jpg' %}" alt="image">
-	                						</figure><!-- End .store-media -->
-	                					</div><!-- End .col-xl-6 -->
-	                					<div class="col-sm-7 col-xl-6">
-	                						<div class="store-content">
-	                							<h3 class="store-title">Wall Street Plaza</h3><!-- End .store-title -->
-	                							<address>88 Pine St, New York, NY 10005, USA</address>
-	                							<div><a href="tel:#">+1 987-876-6543</a></div>
-
-	                							<h4 class="store-subtitle">Store Hours:</h4><!-- End .store-subtitle -->
-                								<div>Monday - Saturday 11am to 7pm</div>
-                								<div>Sunday 11am to 6pm</div>
-
-                								<a href="#" class="btn btn-link" target="_blank"><span>View Map</span><i class="icon-long-arrow-right"></i></a>
-	                						</div><!-- End .store-content -->
-	                					</div><!-- End .col-xl-6 -->
-	                				</div><!-- End .row -->
-	                			</div><!-- End .store -->
-	                		</div><!-- End .col-lg-6 -->
-
-	                		<div class="col-lg-6">
-	                			<div class="store">
-	                				<div class="row">
-	                					<div class="col-sm-5 col-xl-6">
-	                						<figure class="store-media mb-2 mb-lg-0">
-	                							<img src="{% static 'assets/images/stores/img-2.jpg' %}" alt="image">
-	                						</figure><!-- End .store-media -->
-	                					</div><!-- End .col-xl-6 -->
-
-	                					<div class="col-sm-7 col-xl-6">
-	                						<div class="store-content">
-	                							<h3 class="store-title">One New York Plaza</h3><!-- End .store-title -->
-	                							<address>88 Pine St, New York, NY 10005, USA</address>
-	                							<div><a href="tel:#">+1 987-876-6543</a></div>
-
-	                							<h4 class="store-subtitle">Store Hours:</h4><!-- End .store-subtitle -->
-												<div>Monday - Friday 9am to 8pm</div>
-												<div>Saturday - 9am to 2pm</div>
-												<div>Sunday - Closed</div>
-
-                								<a href="#" class="btn btn-link" target="_blank"><span>View Map</span><i class="icon-long-arrow-right"></i></a>
-	                						</div><!-- End .store-content -->
-	                					</div><!-- End .col-xl-6 -->
-	                				</div><!-- End .row -->
-	                			</div><!-- End .store -->
-	                		</div><!-- End .col-lg-6 -->
-	                	</div><!-- End .row -->
-                	</div><!-- End .stores -->
+                    <div class="products">
+                        <button><a href="{% url 'add_product' %}" class="btn-product btn-cart" style="text-align: center; display: block"><span>add to cart</span></a></button>
+                        <div class="row">
+                            {% for product in products %}
+                                <div class="col-6 col-md-4 col-lg-4 col-xl-3">
+                                    <div class="product">
+                                        <figure class="product-media">
+                                            {% if product.is_new %}
+                                                <span class="product-label label-new">New</span>
+                                            {% endif %}
+                                            
+                                            <a href="{% url 'admin_detail_post' product.pk %}">
+                                                              
+                                            <img src="{{ product.get_image }}" alt="Image not found" class="product-image">
+                                                
+                                            </a>                                        
+                                        <div class="product-action action-icon-top">
+                                            <a href="{% url 'update_product' product_id=product.id %}" class="btn"><span>Редактировать</span></a>
+                                            <a href="{% url 'delete_product' pk=product.pk %}" class="btn-comp"><span>Удалить</span></a>
+                                        </div><!-- End .product-action -->
+                                    </figure><!-- End .product-media -->
+                                    <div class="product-body">
+                                        <div class="product-cat">
+                                            <a>{{ product.category.name }}</a>
+                                        </div><!-- End .product-cat -->
+                                        <h3 class="product-title"><a href="{% url 'product_detail' product.pk %}">{{ product.title }}</a></h3><!-- End .product-title -->
+                                        <div class="product-price">
+                                            ${{ product.price }}
+                                          </div><!-- End .product-price -->
+                                        <div class="ratings-container">
+                                            <div class="ratings">
+                                                <div class="ratings-val" style="width: 0%;"></div><!-- End .ratings-val -->
+                                            </div><!-- End .ratings -->
+                                            <span class="ratings-text">( 0 Reviews )</span>
+                                        </div><!-- End .rating-container -->
+                                    </div><!-- End .product-body -->
+                                </div><!-- End .product -->
+                            </div><!-- End .col-6 col-md-4 col-lg-4 col-xl-3 -->
+                            {% endfor %}
+                        </div><!-- End .row -->
+                    </div><!-- End .products -->
+                </div><!-- End .container -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
     </div><!-- End .page-wrapper -->
@@ -354,13 +234,16 @@
                 <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
             </div><!-- End .social-icons -->
         </div><!-- End .mobile-menu-wrapper -->
-    </div><!-- End .mobile-menu-container -->>
-    <!-- Google Map -->
+    </div><!-- End .mobile-menu-container -->
+
 </body>
-<style>
-        .page-header{
-        background-image:  url("{% static 'assets/images/contact-header-bg.jpg' %}")
-    } 
-</style> 
+
 </html>
+
+<style>
+    .page-header{
+        background-image: url("{% static 'assets/images/page-header-bg.jpg' %}");
+    }
+</style>
+
 {% endblock %}

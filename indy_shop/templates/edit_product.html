@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'empty-paht' %}">Дом</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'admin' %}">Админ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Редактирование Продукта</li>
+        </ol>
+    </div><!-- End .container -->
+</nav><!-- End .breadcrumb-nav -->
+<a class="icon-product" href="{% url 'admin' %}" style="text-align: center; color: #bd5d5d; display: block;">Назад В Продукты</a>
+<h3>Редактировать продукт > {{ product.title }}</h3>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}

@@ -1,15 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import FormView
 from django.contrib.auth import login, logout, authenticate
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 # Create your views here.
 
 from apps.account.forms import *
 from apps.account.models import User
-
+from apps.product.models import Product
 
 class LoginView(FormView):
     form_class = LoginForm
@@ -26,7 +29,7 @@ class LoginView(FormView):
                 login(self.request, user)
                 return redirect("empty-paht")
             return HttpResponse("Ваш аккаунт не активен!")
-        return HttpResponse("Введенные вами данные некорректные!")
+        return redirect('error')
 
 
 
@@ -113,3 +116,8 @@ def edit_address(request):
         form = AddressForm(instance=user)
     
     return render(request, template_name, {'form': form})
+
+
+def views_contact(request):
+    template_name = 'contact.html'
+    return render(request, template_name)

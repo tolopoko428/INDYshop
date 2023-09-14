@@ -70,3 +70,10 @@ class AddressForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AddressForm, self).__init__(*args, **kwargs)
         self.fields['address'].widget.attrs.update({'class': 'form-control'})
+
+
+
+
+class PasswordResetForm(forms.Form):
+    new_password1 = forms.CharField(label='Новый пароль', widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label='Подтверждение пароля', widget=forms.PasswordInput)

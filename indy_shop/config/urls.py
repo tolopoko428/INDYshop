@@ -10,6 +10,7 @@ urlpatterns = [
 
     path('account/', include('apps.account.urls')),
     path('', include("apps.product.urls")),
+    path('', include('apps.admin_panel.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

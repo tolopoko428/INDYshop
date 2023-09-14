@@ -1,44 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CreateProductForm
-from .models import Product, ProductImage
+from apps.admin_panel.forms import CreateProductForm, ProductEditForm
 from datetime import datetime, timedelta
+from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
+from .models import *
+from django.contrib.auth.decorators import login_required
+from .forms import AddToFavoritesForm
 # Create your views here.
-
-
-def error(request):
-    templates_name = '404.html'
-    return render(request, templates_name)
-
-
-
-
-def add_product(request):
-    if request.method == 'POST':
-        form = CreateProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            product = form.save()  # Создайте объект Product
-
-            # Проверяем, был ли продукт добавлен в течение недели
-            today = datetime.now().date()
-            one_week_ago = today - timedelta(days=7)
-            
-            if product.created_at.date() >= one_week_ago:
-                product.is_new = True  # Устанавливаем метку "New"
-
-            product.save()
-
-            # После создания продукта, создайте объекты ProductImage для изображений
-            for image in request.FILES.getlist('images'):
-                product_image = ProductImage(product_image_id=product, images=image, is_main=False)  # Установите is_main=False, так как это может не быть основным изображением
-                product_image.save()
-
-            return redirect('empty-paht')  # Перенаправьтесь на нужную страницу после успешного сохранения
-    else:
-        form = CreateProductForm()
-    
-    return render(request, 'add_product.html', {'form': form})
-
-
 
 
 def all_products(request):
@@ -54,10 +22,95 @@ def detail_product(request, pk):
 
 
 
-def top_edit_product(request, product_id):
-    product = Product.objects.get(pk=product_id)
 
-    if product.discount > 0:
-        product.is_top = True
+@login_required
+def add_to_order(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    active_order = Orders.objects.filter(user_id=request.user, status=False).first()
+    
+    if active_order is None:
+        active_order = Orders.objects.create(user_id=request.user, total_amount=0)
+    
+    order_item, created = OrderItem.objects.get_or_create(order_id=active_order, order_item_id=product, defaults={'quantity': 1})
 
-    product.save()
+    if not created:
+        order_item.quantity += 1
+        order_item.save()
+    
+    return redirect('product_detail', pk=product_id)
+
+
+
+@login_required
+def view_order(request):
+    active_order = Orders.objects.filter(user_id=request.user, status=False).first()
+    
+    if active_order:
+        cart_items = OrderItem.objects.filter(order_id=active_order)
+    else:
+        cart_items = []
+    
+    return render(request, 'order.html', {'cart_items': cart_items, 'active_order': active_order})
+
+
+
+@login_required
+def checkout(request):
+    active_order = Orders.objects.filter(user_id=request.user, status=False).first()
+    
+    if active_order:
+        cart_items = OrderItem.objects.filter(order_id=active_order)
+        
+        if request.method == 'POST':
+            active_order.status = True
+            active_order.save()
+            return redirect('view_orders')
+    else:
+        cart_items = []
+    
+    return render(request, 'checkout.html', {'cart_items': cart_items, 'active_order': active_order})
+
+
+
+
+@login_required
+def view_orders(request):
+    user_orders = Orders.objects.filter(user_id=request.user, status=True)
+    return render(request, 'orders.html', {'user_orders': user_orders})
+
+
+
+
+@login_required
+def add_to_favorites(request, product_id):
+    user = request.user
+    product = get_object_or_404(Product, pk=product_id)
+
+    if request.method == 'POST':
+        form = AddToFavoritesForm(request.POST)
+        if form.is_valid():
+           if not FavoriteProduct.objects.filter(user_id=user.id, product_id=product.id).exists():
+                favorite_product = FavoriteProduct(user_id=user.id, product_id=product.id)
+                favorite_product.save()
+    return redirect('wishlist')
+
+
+
+
+@login_required
+def view_favorites(request):
+    user = request.user
+    favorites = FavoriteProduct.objects.filter(user_id=user)
+    context = {'user': user, 'favorites': favorites}
+    return render(request, 'wishlist.html', context)
+
+
+
+@login_required
+def remove_favorite_list(request, pk):
+    user = request.user
+    product = get_object_or_404(Product, pk=pk)
+    favorite_product = FavoriteProduct.objects.filter(user=user, product=product).first()
+    if favorite_product:
+        favorite_product.delete()
+    return redirect('wishlist')

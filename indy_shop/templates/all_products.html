@@ -17,7 +17,7 @@
                 <div class="container">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Дом</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Продукты</li>
+                        <li class="breadcrumb-item active" aria-current="page">Маазин</li>
                     </ol>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
@@ -49,19 +49,18 @@
                                     <div class="product">
                                         <figure class="product-media">
                                             {% if product.is_new %}
-                                            <span class="product-label label-new">New</span>
+                                                <span class="product-label label-new">New</span>
                                             {% endif %}
+                                            
                                             <a href="{% url 'product_detail' product.pk %}">
-                                                {% if product.image %}
-                                                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="product-image">
-                                                {% else %}
-                                                <img src="{% static 'assets/images/no_image.jpg' %}" alt="No Image" class="product-image">
-                                                {% endif %}
-                                            </a>
-                                        <div class="product-action-vertical">
-                                            <a href="" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                        </div><!-- End .product-action -->
-
+                                                              
+                                            <img src="{{ product.get_image }}" alt="Image not found" class="product-image">
+                                                
+                                            </a>                                        
+                                            <div class="product-action-vertical">
+                                                <a href="#" class="btn-product-icon btn-wishlist btn-expandable" data-product-id="{{ product.id }}"><span>add to wishlist</span></a>
+                                            </div>
+                                            
                                         <div class="product-action action-icon-top">
                                             <a href="" class="btn-product btn-cart"><span>add to cart</span></a>
                                             <a href="" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
@@ -525,6 +524,38 @@
 </body>
 
 </html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Обработчик события клика на кнопке "add to wishlist"
+    $('.btn-wishlist').click(function(event) {
+        event.preventDefault();
+
+        // Получаем product_id из атрибута data-product-id
+        var product_id = $(this).data('product-id');
+
+        // Отправляем POST-запрос на представление add_to_favorites
+        $.ajax({
+            url: '/add_to_favorites/' + product_id + '/',
+            method: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                product_id: product_id
+            },
+            success: function(data) {
+                // Обработка успешного ответа (по желанию)
+                // Например, можно обновить кнопку или вывести сообщение об успехе
+                alert('Товар добавлен в избранное!');
+            },
+            error: function() {
+                // Обработка ошибки (по желанию)
+                alert('Произошла ошибка при добавлении товара в избранное.');
+            }
+        });
+    });
+});
+</script>
 
 <style>
     .page-header{
