@@ -36,9 +36,10 @@ class ProductAdmin(admin.ModelAdmin):
         obj.delete()
 
 
+
 @admin.register(Orders)
 class OrdersAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'total_amount', 'status', 'created_at')  # Используйте атрибуты из вашей модели Orders
+    list_display = ('user_id', 'total_amount', 'status', 'created_at')
     list_filter = ('created_at',)
     search_fields = ('user_id__username', 'status')
 
@@ -46,6 +47,13 @@ class OrdersAdmin(admin.ModelAdmin):
         return obj.user_id.username
 
     user_id.short_description = 'User'
+
+    actions = ['delete_selected']
+
+    def delete_selected(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
+
 
 
 @admin.register(OrderItem)
@@ -63,8 +71,21 @@ class OrderItemAdmin(admin.ModelAdmin):
     order_id.short_description = 'Order ID'
     order_item_id.short_description = 'Order Item Title'
 
+    actions = ['delete_selected']
+
+    def delete_selected(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
+
+
 
 @admin.register(FavoriteProduct)
-class FovoriteProductAdmin(admin.ModelAdmin):
+class FavoriteProductAdmin(admin.ModelAdmin):
     list_display = ('product_id', 'user_id')
     search_fields = ('product_id', 'user_id')
+
+    actions = ['delete_selected']
+
+    def delete_selected(self, request, queryset):
+        for obj in queryset:
+            obj.delete()

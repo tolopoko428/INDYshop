@@ -27,56 +27,59 @@ def detail_product(request, pk):
 def add_to_order(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     active_order = Orders.objects.filter(user_id=request.user, status=False).first()
-    
     if active_order is None:
         active_order = Orders.objects.create(user_id=request.user, total_amount=0)
-    
     order_item, created = OrderItem.objects.get_or_create(order_id=active_order, order_item_id=product, defaults={'quantity': 1})
-
     if not created:
         order_item.quantity += 1
         order_item.save()
-    
-    return redirect('product_detail', pk=product_id)
+    return redirect('cart', pk=product_id)
 
 
 
 @login_required
-def view_order(request):
-    active_order = Orders.objects.filter(user_id=request.user, status=False).first()
-    
-    if active_order:
-        cart_items = OrderItem.objects.filter(order_id=active_order)
-    else:
-        cart_items = []
-    
-    return render(request, 'order.html', {'cart_items': cart_items, 'active_order': active_order})
-
-
-
-@login_required
-def checkout(request):
-    active_order = Orders.objects.filter(user_id=request.user, status=False).first()
-    
-    if active_order:
-        cart_items = OrderItem.objects.filter(order_id=active_order)
-        
-        if request.method == 'POST':
-            active_order.status = True
-            active_order.save()
-            return redirect('view_orders')
-    else:
-        cart_items = []
-    
-    return render(request, 'checkout.html', {'cart_items': cart_items, 'active_order': active_order})
-
+def remove_from_order(request, product_id):
+    try:
+        product = Product.objects.get(pk=product_id)
+        order = Orders.objects.get(user_id=request.user, status=False)
+        order_item = OrderItem.objects.get(order_id=order, order_item_id=product)
+        order_item.delete()
+        return redirect('cart.html')
+    except (Product.DoesNotExist, Orders.DoesNotExist, OrderItem.DoesNotExist):
+        return render(request, 'error', {'error_message': 'Товар не найден в корзине.'})
 
 
 
 @login_required
 def view_orders(request):
-    user_orders = Orders.objects.filter(user_id=request.user, status=True)
-    return render(request, 'orders.html', {'user_orders': user_orders})
+    active_order = Orders.objects.filter(user_id=request.user, status=False).first()
+    if active_order:
+        cart_items = OrderItem.objects.filter(order_id=active_order)
+    else:
+        cart_items = []
+    return render(request, 'cart', {'cart_items': cart_items, 'active_order': active_order})
+
+
+
+@login_required
+def cart_items(request):
+    user = request.user
+    order = Orders.objects.filter(user_id=user, status=False).first()
+
+    if order:
+        cart_items = order.order_items.all()
+        cart_count = sum(item.quantity for item in cart_items)
+    else:
+        cart_items = []
+        cart_count = 0
+
+    context = {
+        'cart_items': cart_items,
+        'cart_count': cart_count, 
+    }
+
+    return context
+
 
 
 

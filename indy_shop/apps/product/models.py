@@ -90,9 +90,10 @@ class OrderItem(models.Model):
     update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = 'Элемент заказа'
-        verbose_name_plural = 'Элементы заказа'
+        verbose_name = 'Корзина'
+        verbose_name_plural = 'Корзина'
         ordering = ['-update_at']
+
 
     def __str__(self):
         return f"{self.product.title} in Order #{self.order.id}"
@@ -103,8 +104,8 @@ class FavoriteProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = 'Товар в избранном'
-        verbose_name_plural = 'Товары в избранном'
+        verbose_name = 'Изюранный'
+        verbose_name_plural = 'Избранные'
 
     def __str__(self):
         return f"{self.product.title} в избранном у {self.user.email}"
