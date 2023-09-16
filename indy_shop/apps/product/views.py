@@ -27,13 +27,17 @@ def detail_product(request, pk):
 def add_to_order(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     active_order = Orders.objects.filter(user_id=request.user, status=False).first()
+    
     if active_order is None:
         active_order = Orders.objects.create(user_id=request.user, total_amount=0)
+    
     order_item, created = OrderItem.objects.get_or_create(order_id=active_order, order_item_id=product, defaults={'quantity': 1})
+
     if not created:
         order_item.quantity += 1
         order_item.save()
-    return redirect('cart', pk=product_id)
+    
+    return redirect('empty-paht')
 
 
 
@@ -53,11 +57,12 @@ def remove_from_order(request, product_id):
 @login_required
 def view_orders(request):
     active_order = Orders.objects.filter(user_id=request.user, status=False).first()
+    
     if active_order:
         cart_items = OrderItem.objects.filter(order_id=active_order)
     else:
         cart_items = []
-    return render(request, 'cart', {'cart_items': cart_items, 'active_order': active_order})
+    return render(request, 'cart.html', {'cart_items': cart_items, 'active_order': active_order})
 
 
 
@@ -68,18 +73,17 @@ def cart_items(request):
 
     if order:
         cart_items = order.order_items.all()
-        cart_count = sum(item.quantity for item in cart_items)
+        cart_count = [item.quantity for item in cart_items]
     else:
         cart_items = []
         cart_count = 0
 
     context = {
         'cart_items': cart_items,
-        'cart_count': cart_count, 
+        'cart_count': cart_count,
     }
 
     return context
-
 
 
 
