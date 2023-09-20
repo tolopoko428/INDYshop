@@ -42,14 +42,13 @@
                         <div class="header-dropdown">
                         </div><!-- End .header-dropdown -->
                     </div><!-- End .header-left -->
-
                     <div class="header-right">
                         <ul class="top-menu">
                             <li>
                                 <a href="#">Links</a>
                                 <ul>
                                     <li><a href="tel:#"><i class="icon-phone"></i>Телефон номер +996 706 428 666</a></li>
-                                    <li><a href="{% url 'wishlist' %}"><i class="icon-heart-o"></i>Избранные <span>(3)</span></a></li>
+                                    <li><a href="{% url 'wishlist' %}"><i class="icon-heart-o"></i>Избранные <span></span></a></li>
                                     <li><a href='{% url "contact" %}'>Контакты     </a></li>
                                         {% if request.user.is_authenticated %}
                                             <a href="{% url 'profile' %}"><i class="icon-user"></i>{{ request.user.email }}</a>
@@ -71,21 +70,17 @@
                         <button class="mobile-menu-toggler">
                             <span class="sr-only">Toggle mobile menu</span>
                             <i class="icon-bars"></i>
-                        </button>
-
+                        </button> 
                         <a href="{% url 'empty-paht' %}" class="logo">
-                            <img src="{% static 'assets/images/logo.png' %}" alt="Molla Logo" width="105" height="250">
+                            <img src="{% static 'assets/images/OFF.png' %}" alt="OFF ZET" width="105" height="250">
                         </a>
                         <div class="header-right">
-                        <div class="header-search">
-                            <a href="#" class="search-toggle" role="button" title="Search"><i class="icon-search"></i></a>
-                            <form action="#" method="get">
-                                <div class="header-search-wrapper">
-                                    <label for="q" class="sr-only">Search</label>
-                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required>
-                                </div><!-- End .header-search-wrapper -->
-                            </form>
-                        </div><!-- End .header-search -->
+                            <form onsubmit="event.preventDefault(); search();" class="header-search-wrapper">
+                                <label for="q" class="sr-only">Search</label>
+                                <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required>
+                                <button type="submit"><i class="icon-search"></i></button>
+                              </form>
+                                                          
                         <div class="dropdown cart-dropdown">
                             <a href="" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                                 <i class="icon-shopping-cart"></i>
@@ -93,44 +88,31 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <div class="dropdown-cart-products">
+                                    
                                     <div class="product">
-                                        <div class="product-cart-details">
-                                            <h4 class="product-title">
-                                                <a href="product.html">Beige knitted elastic runner shoes</a>
-                                            </h4>
-                                            <span class="cart-product-info">
-                                                <span class="cart-product-qty">1</span>
-                                                x $84.00
-                                            </span>
-                                        </div><!-- End .product-cart-details -->
-
-                                        <figure class="product-image-container">
-                                            <a href="product.html" class="product-image">
-                                                <img src="{% static 'assets/images/products/cart/product-1.jpg' %}" alt="product">
-                                            </a>
-                                        </figure>
-                                        <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                                    </div><!-- End .product -->
-
-                                    <div class="product">
-                                        <div class="product-cart-details">
-                                            <h4 class="product-title">
-                                                <a href="product.html">Blue utility pinafore denim dress</a>
-                                            </h4>
-
-                                            <span class="cart-product-info">
-                                                <span class="cart-product-qty">1</span>
-                                                x $76.00
-                                            </span>
-                                        </div><!-- End .product-cart-details -->
-
-                                        <figure class="product-image-container">
-                                            <a href="product.html" class="product-image">
-                                                <img src="{% static 'assets/images/products/cart/product-2.jpg' %}" alt="product">
-                                            </a>
-                                        </figure>
-                                        <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                                    </div><!-- End .product -->
+                                        {% for cart_item in cart_item|slice:":5" %}
+                                            <div class="product-cart-details">
+                                                <h4 class="product-title">
+                                                    <a href="product.html">{{ cart_item.product.title }}</a>
+                                                </h4>
+                                                <span class="cart-product-info">
+                                                    <span class="cart-product-qty">{{ cart_item.quantity }}</span>
+                                                    x ${{ cart_item.product.price }}
+                                                </span>
+                                            </div><!-- End .product-cart-details -->
+                                    
+                                            <figure class="product-image-container">
+                                                <a href="product.html" class="product-image">
+                                                    <img src="{% static 'assets/images/products/cart/product-1.jpg' %}" alt="product">
+                                                </a>
+                                            </figure>
+                                            <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
+                                        </div><!-- End .product -->
+                                        {% empty %}
+                                            <p>В заказе нет товаров.</p>
+                                        {% endfor %}
+                                    </div>
+                                    
                                 </div><!-- End .cart-product -->
 
                                 <div class="dropdown-cart-total">
@@ -140,8 +122,8 @@
                                 </div><!-- End .dropdown-cart-total -->
 
                                 <div class="dropdown-cart-action">
-                                    <a href="cart.html" class="btn btn-primary">View Cart</a>
-                                    <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
+                                    <a href="{% url 'cart' %}" class="btn btn-primary">View Cart</a>
+                                    <a href="ceckout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .dropdown-cart-total -->
                             </div><!-- End .dropdown-menu -->
                         </div><!-- End .cart-dropdown -->
@@ -162,7 +144,7 @@
 	            	<div class="row">
 	            		<div class="col-sm-6 col-lg-3">
 	            			<div class="widget widget-about">
-	            				<img src="{% static 'assets/images/logo.png' %}" class="footer-logo" alt="Footer Logo" width="105" height="25">
+	            				<img src="{% static 'assets/images/OFF.png' %}" class="footer-logo" alt="Footer Logo" width="105" height="25">
 	            				<p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. </p>
 
 	            				<div class="social-icons">
@@ -180,11 +162,8 @@
 	            				<h4 class="widget-title">Useful Links</h4><!-- End .widget-title -->
 
 	            				<ul class="widget-list">
-	            					<li><a href="about.html">About Molla</a></li>
-	            					<li><a href="#">How to shop on Molla</a></li>
-	            					<li><a href="#">FAQ</a></li>
-	            					<li><a href="contact.html">Contact us</a></li>
-	            					<li><a href="login.html">Log in</a></li>
+	            					<li><a href="{% url 'contact' %}">Contact us</a></li>
+	            					<li><a href="{% url 'login' %}">Log in</a></li>
 	            				</ul><!-- End .widget-list -->
 	            			</div><!-- End .widget -->
 	            		</div><!-- End .col-sm-6 col-lg-3 -->
@@ -206,14 +185,13 @@
 
 	            		<div class="col-sm-6 col-lg-3">
 	            			<div class="widget">
-	            				<h4 class="widget-title">My Account</h4><!-- End .widget-title -->
+	            				<h4 class="widget-title">Мой Аккаунт</h4><!-- End .widget-title -->
 
 	            				<ul class="widget-list">
-	            					<li><a href="#">Sign In</a></li>
-	            					<li><a href="cart.html">View Cart</a></li>
-	            					<li><a href="#">My Wishlist</a></li>
+	            					<li><a href="{% url 'register' %}">Sign In</a></li>
+	            					<li><a href="{% url 'cart' %}">View Cart</a></li>
+	            					<li><a href="{% url 'wishlist' %}">My Wishlist</a></li>
 	            					<li><a href="#">Track My Order</a></li>
-	            					<li><a href="#">Help</a></li>
 	            				</ul><!-- End .widget-list -->
 	            			</div><!-- End .widget -->
 	            		</div><!-- End .col-sm-6 col-lg-3 -->
@@ -223,7 +201,7 @@
 
 	        <div class="footer-bottom">
 	        	<div class="container">
-	        		<p class="footer-copyright">Copyright © 2019 Molla Store. All Rights Reserved.</p><!-- End .footer-copyright -->
+	        		<p class="footer-copyright">Авторское право © 2023 Магазин OFF ZET все права защищены</p><!-- End .footer-copyright -->
 	        		<figure class="footer-payments">
 	        			<img src="{% static 'assets/images/payments.png' %}" alt="Payment methods" width="272" height="20">
 	        		</figure><!-- End .footer-payments -->
@@ -389,6 +367,26 @@
     <script src="{% static 'assets/js/nouislider.min.js' %}"></script>
     <!-- Main JS File -->
     <script src="{% static 'assets/js/main.js' %}"></script>
-
+    
+    <script>
+        // Получаем ссылку на элемент для работы с результатами поиска
+        var searchResults = document.getElementById("searchResults");
+        
+        // Выполнение поиска с использованием AJAX
+        function search() {
+          var query = document.getElementById("q").value;
+          if (query) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState === 4 && xhr.status === 200) {
+                searchResults.innerHTML = xhr.responseText;
+              }
+            };
+            xhr.open("GET", "{% url 'product_search' %}?q=" + query, true);
+            xhr.send();
+          }
+        }
+        </script>
+        
 </body>
 </html>

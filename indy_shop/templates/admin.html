@@ -15,16 +15,26 @@
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
             <a class="icon-user" style="text-align: center; display: block;">Админ Понель</a>
+        </head>
+        <body>        
+            <script src="script.js"></script> <!-- Подключаем скрипт (script.js) -->
+        </body>
+
             <div class="page-content">
                 <div class="container">
                     <div class="products">
                         <button><a href="{% url 'add_product' %}" class="btn-product btn-cart" style="text-align: center; display: block"><span>add to cart</span></a></button>
+                        {% if request.user.is_superuser %}
+                            <a href="{% url 'personal_registration' %}" id="openModalBtn" class="register-button">Зарегистрировать новый персонал</a>
+                        {% endif %}
                         <div class="row">
                             {% for product in products %}
                                 <div class="col-6 col-md-4 col-lg-4 col-xl-3">
                                     <div class="product">
                                         <figure class="product-media">
-                                            {% if product.is_new %}
+                                            {% if product.is_top %}
+                                            <span class="product-label label-top">Top</span>
+                                            {% elif product.is_new %}
                                                 <span class="product-label label-new">New</span>
                                             {% endif %}
                                             
@@ -245,5 +255,4 @@
         background-image: url("{% static 'assets/images/page-header-bg.jpg' %}");
     }
 </style>
-
 {% endblock %}

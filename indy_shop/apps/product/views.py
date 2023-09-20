@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from .models import *
 from django.contrib.auth.decorators import login_required
-from .forms import AddToFavoritesForm
+from .forms import *
 # Create your views here.
 
 
@@ -22,69 +22,40 @@ def detail_product(request, pk):
 
 
 
+# @login_required
+# def create_order(request, product_id):
+#     product = get_object_or_404(Product, id=product_id)
 
-@login_required
-def add_to_order(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)
-    active_order = Orders.objects.filter(user_id=request.user, status=False).first()
-    
-    if active_order is None:
-        active_order = Orders.objects.create(user_id=request.user, total_amount=0)
-    
-    order_item, created = OrderItem.objects.get_or_create(order_id=active_order, order_item_id=product, defaults={'quantity': 1})
+#     if request.method == 'POST':
+#         form = OrderForm(request.POST)
+#         if form.is_valid():
+#             order = form.save(commit=False)
+#             order.user_id = request.user
+#             order.save()
+#             order.products.add(product)
+#             return redirect('order_list')
+#     else:
+#         # Передайте данные из модели пользователя в поля формы вручную
+#         initial_data = {
+#             'total_amount': product.price,
+#             'status': 'Обработка',
+#             'postal_code': None,  # Установите по умолчанию, если требуется
+#         }
+#         form = OrderForm(initial=initial_data)
 
-    if not created:
-        order_item.quantity += 1
-        order_item.save()
-    
-    return redirect('empty-paht')
+#     return render(request, 'create_order.html', {'form': form})
+
 
 
 
 @login_required
 def remove_from_order(request, product_id):
-    try:
-        product = Product.objects.get(pk=product_id)
-        order = Orders.objects.get(user_id=request.user, status=False)
-        order_item = OrderItem.objects.get(order_id=order, order_item_id=product)
-        order_item.delete()
-        return redirect('cart.html')
-    except (Product.DoesNotExist, Orders.DoesNotExist, OrderItem.DoesNotExist):
-        return render(request, 'error', {'error_message': 'Товар не найден в корзине.'})
-
+    pass
 
 
 @login_required
 def view_orders(request):
-    active_order = Orders.objects.filter(user_id=request.user, status=False).first()
-    
-    if active_order:
-        cart_items = OrderItem.objects.filter(order_id=active_order)
-    else:
-        cart_items = []
-    return render(request, 'cart.html', {'cart_items': cart_items, 'active_order': active_order})
-
-
-
-@login_required
-def cart_items(request):
-    user = request.user
-    order = Orders.objects.filter(user_id=user, status=False).first()
-
-    if order:
-        cart_items = order.order_items.all()
-        cart_count = [item.quantity for item in cart_items]
-    else:
-        cart_items = []
-        cart_count = 0
-
-    context = {
-        'cart_items': cart_items,
-        'cart_count': cart_count,
-    }
-
-    return context
-
+    pass
 
 
 
@@ -121,3 +92,80 @@ def remove_favorite_list(request, pk):
     if favorite_product:
         favorite_product.delete()
     return redirect('wishlist')
+
+
+
+@login_required
+def views_cart(request):
+    template_name = 'cart.html'
+    user = request.user
+
+    cart_items = Cart.objects.filter(user=user)
+
+    context = {
+        'cart_items': cart_items,
+    }
+
+    return render(request, template_name, context)
+
+
+@login_required
+def add_to_cart(request, product_id):
+    if request.method == 'POST' or request.method == 'GET':
+        quantity = int(request.POST.get('quantity', 1))
+        user = request.user
+        try:
+            cart = Cart.objects.get(user=user)
+        except Cart.DoesNotExist:
+            cart = Cart.objects.create(user=user)
+        product = Product.objects.get(pk=product_id)
+
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        if not created:
+            cart_item.quantity += quantity
+            cart_item.save()
+
+    return redirect('empty-paht')
+
+
+
+@login_required
+def remove_from_cart(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+
+        # Получите текущего пользователя
+        user = request.user
+
+        # Получите корзину пользователя
+        cart = Cart.objects.get(user=user)
+
+        # Удалите запись из корзины
+        CartItem.objects.filter(cart=cart, product_id=product_id).delete()
+
+    return redirect('cart')
+
+
+
+@login_required
+def clear_cart(request):
+    # Получите текущего пользователя
+    user = request.user
+
+    # Получите корзину пользователя и удалите все записи
+    CartItem.objects.filter(cart__user=user).delete()
+
+    return redirect('cart')
+
+
+
+def product_search(request):
+    form = ProductSearchForm(request.GET)
+    query = request.GET.get('q')
+
+    if query:
+        results = Product.objects.filter(title__icontains=query)
+    else:
+        results = None
+
+    return render(request, 'search_results.html', {'results': results})

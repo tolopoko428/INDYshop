@@ -16,8 +16,8 @@
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Дом</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Маазин</li>
+                        <li class="breadcrumb-item"><a href="{% url 'empty-paht' %}">Дом</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Магазин</li>
                     </ol>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
@@ -48,7 +48,10 @@
                                 <div class="col-6 col-md-4 col-lg-4 col-xl-3">
                                     <div class="product">
                                         <figure class="product-media">
-                                            {% if product.is_new %}
+
+                                            {% if product.is_top %}
+                                            <span class="product-label label-top">Top</span>
+                                            {% elif product.is_new %}
                                                 <span class="product-label label-new">New</span>
                                             {% endif %}
                                             
@@ -62,7 +65,7 @@
                                             </div>
                                             
                                         <div class="product-action action-icon-top">
-                                            <a href="{% url 'add_to_cart' product.id %}" class="btn-product btn-cart"><span>в корзину</span></a>
+                                            <a href="{% url 'add_to_cart' product.pk %}" class="btn-product btn-cart"><span>в корзину</span></a>
                                             <a href="" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
                                             <a href="" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
                                         </div><!-- End .product-action -->
@@ -244,14 +247,14 @@
                                 <div class="collapse show" id="widget-3">
                                     <div class="widget-body">
                                         <div class="filter-colors">
-                                            <a href="#" style="background: #b87145;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" style="background: #f0c04a;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" style="background: #333333;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" class="selected" style="background: #cc3333;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" style="background: #3399cc;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" style="background: #669933;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" style="background: #f2719c;"><span class="sr-only">Color Name</span></a>
-                                            <a href="#" style="background: #ebebeb;"><span class="sr-only">Color Name</span></a>
+                                            <a href="#" style="background: #b87145;"><span class="sr-only">коричневый</span></a>
+                                            <a href="#" style="background: #f0c04a;"><span class="sr-only">жолтый</span></a>
+                                            <a href="#" style="background: #333333;"><span class="sr-only">черный</span></a>
+                                            <a href="#" class="selected" style="background: #cc3333;"><span class="sr-only">красный</span></a>
+                                            <a href="#" style="background: #3399cc;"><span class="sr-only">синий</span></a>
+                                            <a href="#" style="background: #669933;"><span class="sr-only">зеленый</span></a>
+                                            <a href="#" style="background: #f2719c;"><span class="sr-only">розовый</span></a>
+                                            <a href="#" style="background: #ebebeb;"><span class="sr-only">белый</span></a>
                                         </div><!-- End .filter-colors -->
                                     </div><!-- End .widget-body -->
                                 </div><!-- End .collapse -->

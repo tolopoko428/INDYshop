@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CreateProductForm, ProductEditForm
+from .forms import *
 from apps.product.models import Product, ProductImage
 from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 
 def error(request):
     templates_name = '404.html'
@@ -30,17 +33,22 @@ def update_product(request, product_id):
         if form.is_valid():
             product = form.save()
 
-            # Обработка успешного редактирования
-            # Сохраняем изображения
             images = request.FILES.getlist('image')
             for image in images:
                 ProductImage.objects.create(product=product, image=image)
 
-            return redirect('admin')  # Замените 'admin' на ваше представление администратора
+            discount = form.cleaned_data.get('discount')
+            if discount > 0:
+                product.price -= discount
+                product.is_top = True
+                product.save()
+
+            return redirect('admin')
     else:
         form = ProductEditForm(instance=product)
 
     return render(request, 'edit_product.html', {'form': form, 'product': product})
+
 
 
 
@@ -69,8 +77,9 @@ def add_product(request):
             product.save()
 
             # После создания продукта, создайте объекты ProductImage для изображений
-            for image in request.FILES.getlist('images'):
-                product_image = ProductImage(product_image_id=product, images=image, is_main=False)  # Установите is_main=False, так как это может не быть основным изображением
+            for image_form in request.FILES.getlist('images'):
+                is_main = image_form.cleaned_data.get('is_main', False)
+                product_image = ProductImage(product=product, image=image_form, is_main=is_main)
                 product_image.save()
 
             return redirect('admin')  # Перенаправьтесь на нужную страницу после успешного сохранения
@@ -80,6 +89,7 @@ def add_product(request):
     return render(request, 'add_product.html', {'form': form})
 
 
+
 @user_passes_test(is_personal, login_url='error')
 def admin_ponel(request):
     template_name = 'admin.html'
@@ -87,8 +97,32 @@ def admin_ponel(request):
     return render(request, template_name, {'products': products})
 
 
+
 @user_passes_test(is_personal, login_url='error')
 def admin_detail_post(request, pk):
     template_name = 'admin_detail_product.html'
     product = get_object_or_404(Product, pk=pk)
     return render(request, template_name, {'product': product})
+
+
+
+@user_passes_test(is_superuser, login_url='error')
+def staff_registration(request):
+    template_name = 'staff_registration.html'
+    form = StaffRegistrationForm()
+    if request.method == "POST":
+        form = StaffRegistrationForm(request.POST, request.FILES)
+        if form.is_valid():
+            password = form.cleaned_data["password1"]
+            user = User.objects.create(
+                email=form.cleaned_data["email"],
+                first_name=form.cleaned_data["first_name"],
+                last_name=form.cleaned_data["last_name"],
+                is_staff=True, 
+            )
+            user.set_password(password)
+            user.save()
+            return redirect("admin")
+    
+    context = {'form': form}
+    return render(request, template_name, context)

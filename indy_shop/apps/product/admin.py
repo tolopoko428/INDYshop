@@ -18,7 +18,7 @@ class ProductImageInline(admin.TabularInline):  # You can also use 'StackedInlin
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'price', 'created_at', 'stock_count', 'category', 'is_top', 'discount', 'rating', 'quantity', 'status')
+    list_display = ('title', 'description', 'price', 'created_at', 'stock_count', 'category', 'is_top', 'rating', 'quantity', 'status')
     list_filter = ('category', 'is_top', 'created_at', 'quantity', 'status')
     search_fields = ('title', 'category__name')
     form = ProductEditForm
@@ -89,3 +89,22 @@ class FavoriteProductAdmin(admin.ModelAdmin):
     def delete_selected(self, request, queryset):
         for obj in queryset:
             obj.delete()
+
+
+@admin.register(ProductImage)
+class AdminProductImage(admin.ModelAdmin):
+    list_display = ('product', 'image', 'is_main')
+
+
+
+
+@admin.register(Cart)
+class AdminCart(admin.ModelAdmin):
+    list_display = ('user',)
+
+
+
+@admin.register(CartItem)
+class AdminCartItem(admin.ModelAdmin):
+    list_display = ('cart', 'product', 'quantity',)
+

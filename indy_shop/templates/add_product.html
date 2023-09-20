@@ -9,7 +9,17 @@
     {{ form.as_p }}
     {{ form.errors }}
     <input type="submit" value="Добавить продукт">
-
 </form>
+<div class="form-group">
+    <label>Доступные размеры</label><br>
+    {{ form.sizes }}
+</div>
+
+<div class="form-group">
+    <label>Доступные цвета</label><br>
+    {{ form.colors }}
+</div>
+
+
 
 {% endblock %}
