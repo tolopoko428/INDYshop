@@ -38,7 +38,9 @@ def update_product(request, product_id):
                 ProductImage.objects.create(product=product, image=image)
 
             discount = form.cleaned_data.get('discount')
-            if discount > 0:
+            if discount == 0 or discount == None:
+                pass
+            elif discount < 1:
                 product.price -= discount
                 product.is_top = True
                 product.save()
@@ -76,11 +78,12 @@ def add_product(request):
 
             product.save()
 
-            # После создания продукта, создайте объекты ProductImage для изображений
-            for image_form in request.FILES.getlist('images'):
-                is_main = image_form.cleaned_data.get('is_main', False)
+            images = request.FILES.getlist('images')
+            is_main = True  # Устанавливаем флаг is_main для первого изображения
+            for image_form in images:
                 product_image = ProductImage(product=product, image=image_form, is_main=is_main)
                 product_image.save()
+                is_main = False
 
             return redirect('admin')  # Перенаправьтесь на нужную страницу после успешного сохранения
     else:

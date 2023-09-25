@@ -27,35 +27,22 @@ class MultipleFileField(forms.FileField):
 class CreateProductForm(forms.ModelForm):
     price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={"type": "number"}))
     category_id = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label=None, label="Категория")
-    images = forms.FileField(widget=MultipleFileInput(attrs={'multiple': True}))
+    # images = forms.FileField(widget=MultipleFileInput(attrs={'multiple': True}))
+    images = MultipleFileField()
     quantity = forms.IntegerField(initial=1)
     color = forms.ChoiceField(choices=COLOR_CHOICES, required=False, label="Цвет")  
     size = forms.ChoiceField(choices=SIZE_CHOICES, required=False, label="Размер") 
 
-    sizes = forms.ModelMultipleChoiceField(
-    queryset=Size.objects.all(),
-    widget=forms.CheckboxSelectMultiple,
-    required=False
-    )
-
-    colors = forms.ModelMultipleChoiceField(
-    queryset=Color.objects.all(),
-    widget=forms.CheckboxSelectMultiple,
-    required=False
-    ) 
-
     class Meta:
         model = Product
         exclude = []
-        fields = ['title', 'description', 'price', 'category', 'quantity', 'color', 'size', 'images']
+        fields = ['title', 'description', 'price', 'quantity', 'color', 'size', 'images', 'category_id']
 
     def save(self, commit=True):
         product = super(CreateProductForm, self).save(commit=False)
         product.quantity = self.cleaned_data['quantity']
         product.save()
         images = self.files.getlist('images')
-        product.sizes.set(self.cleaned_data['sizes'])
-        product.colors.set(self.cleaned_data['colors'])  # Обратите внимание на имя поля 'images'
         for image in images:
             ProductImage.objects.create(product=product, image=image)
         return product

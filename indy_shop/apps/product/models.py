@@ -124,7 +124,8 @@ class OrderItem(models.Model):
 
 
     def __str__(self):
-        return f"{self.product.title} in Order #{self.order.id}"
+        return f"{self.order_item_id} in Order #{self.order_id.id}"
+
     
 
 class FavoriteProduct(models.Model):
@@ -151,10 +152,12 @@ class Cart(models.Model):
 
 
 
+
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    total = models.IntegerField(null=True, blank=True)
 
     class Meta:
         verbose_name = 'Элемент Карзина'
@@ -162,6 +165,11 @@ class CartItem(models.Model):
 
     def get_total_price(self):
         return self.product.price * self.quantity
+
+    def save(self, *args, **kwargs):
+        self.total = self.get_total_price()
+        super(CartItem, self).save(*args, **kwargs)
+
     
 
 class Size(models.Model):

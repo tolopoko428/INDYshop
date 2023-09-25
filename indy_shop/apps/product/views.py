@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from .models import *
 from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 from .forms import *
 # Create your views here.
 
@@ -24,26 +26,7 @@ def detail_product(request, pk):
 
 # @login_required
 # def create_order(request, product_id):
-#     product = get_object_or_404(Product, id=product_id)
 
-#     if request.method == 'POST':
-#         form = OrderForm(request.POST)
-#         if form.is_valid():
-#             order = form.save(commit=False)
-#             order.user_id = request.user
-#             order.save()
-#             order.products.add(product)
-#             return redirect('order_list')
-#     else:
-#         # Передайте данные из модели пользователя в поля формы вручную
-#         initial_data = {
-#             'total_amount': product.price,
-#             'status': 'Обработка',
-#             'postal_code': None,  # Установите по умолчанию, если требуется
-#         }
-#         form = OrderForm(initial=initial_data)
-
-#     return render(request, 'create_order.html', {'form': form})
 
 
 
@@ -100,13 +83,29 @@ def views_cart(request):
     template_name = 'cart.html'
     user = request.user
 
-    cart_items = Cart.objects.filter(user=user)
+    cart_items = CartItem.objects.filter(cart__user=user)
+
+    total_price = sum(cart_item.get_total_price() for cart_item in cart_items if cart_item.product.price)
+
+    shipping_cost = 0
+    if total_price >= 10:
+        shipping_cost = 0
+    else:
+        shipping_cost = 10 if total_price < 10 else 20
+
+    total_cost = total_price + shipping_cost
 
     context = {
         'cart_items': cart_items,
+        'total_price': total_price,
+        'shipping_cost': shipping_cost,
+        'total_cost': total_cost,
     }
 
     return render(request, template_name, context)
+
+
+
 
 
 @login_required
@@ -130,42 +129,29 @@ def add_to_cart(request, product_id):
 
 
 @login_required
-def remove_from_cart(request):
-    if request.method == 'POST':
-        product_id = request.POST.get('product_id')
-
-        # Получите текущего пользователя
-        user = request.user
-
-        # Получите корзину пользователя
-        cart = Cart.objects.get(user=user)
-
-        # Удалите запись из корзины
-        CartItem.objects.filter(cart=cart, product_id=product_id).delete()
-
+def remove_from_cart(request, product_id):
+    user = request.user
+    cart = Cart.objects.get(user=user)
+    product = get_object_or_404(Product, id=product_id)
+    CartItem.objects.filter(cart=cart, product=product).delete()
     return redirect('cart')
 
 
 
 @login_required
 def clear_cart(request):
-    # Получите текущего пользователя
     user = request.user
 
-    # Получите корзину пользователя и удалите все записи
     CartItem.objects.filter(cart__user=user).delete()
 
     return redirect('cart')
 
 
 
+
+
 def product_search(request):
-    form = ProductSearchForm(request.GET)
     query = request.GET.get('q')
+    results = Product.objects.filter(title__icontains=query)
+    return render(request, 'search_results.html', {'results': results, 'query': query})
 
-    if query:
-        results = Product.objects.filter(title__icontains=query)
-    else:
-        results = None
-
-    return render(request, 'search_results.html', {'results': results})

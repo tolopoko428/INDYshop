@@ -26,12 +26,16 @@
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
     <!-- Main CSS File -->
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/owl-carousel/owl.carousel.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/magnific-popup/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/plugins/nouislider/nouislider.css' %}">
     <style>
         .header .container .header .container-fluid {
             display: block!important;
         }
     </style>
 </head>
+
 
 <body>
     <div class="page-wrapper">
@@ -74,58 +78,28 @@
                         <a href="{% url 'empty-paht' %}" class="logo">
                             <img src="{% static 'assets/images/OFF.png' %}" alt="OFF ZET" width="105" height="250">
                         </a>
+
                         <div class="header-right">
-                            <form onsubmit="event.preventDefault(); search();" class="header-search-wrapper">
+                            <form class="header-search-wrapper">
                                 <label for="q" class="sr-only">Search</label>
-                                <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required>
-                                <button type="submit"><i class="icon-search"></i></button>
-                              </form>
-                                                          
+                                <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required onkeydown="if (event.keyCode === 13) { event.preventDefault(); search(); }">
+                                <button type="button" onclick="search()"><i class="icon-search"></i></button>
+                            </form>
+                        </div>
+                        
+                        <!-- Модальное окно для результатов поиска -->
+                        <div id="searchModal" class="modal">
+                          <div class="modal-content">
+                            <span class="close" onclick="closeSearchModal()">&times;</span>
+                            <div id="searchResults"></div>
+                          </div>
+                        </div>
+
                         <div class="dropdown cart-dropdown">
-                            <a href="" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                            <a href="{% url 'cart' %}" class="dropdown-toggle">
                                 <i class="icon-shopping-cart"></i>
                                 <span class="cart-count">{{ cart_count }}</span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <div class="dropdown-cart-products">
-                                    
-                                    <div class="product">
-                                        {% for cart_item in cart_item|slice:":5" %}
-                                            <div class="product-cart-details">
-                                                <h4 class="product-title">
-                                                    <a href="product.html">{{ cart_item.product.title }}</a>
-                                                </h4>
-                                                <span class="cart-product-info">
-                                                    <span class="cart-product-qty">{{ cart_item.quantity }}</span>
-                                                    x ${{ cart_item.product.price }}
-                                                </span>
-                                            </div><!-- End .product-cart-details -->
-                                    
-                                            <figure class="product-image-container">
-                                                <a href="product.html" class="product-image">
-                                                    <img src="{% static 'assets/images/products/cart/product-1.jpg' %}" alt="product">
-                                                </a>
-                                            </figure>
-                                            <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                                        </div><!-- End .product -->
-                                        {% empty %}
-                                            <p>В заказе нет товаров.</p>
-                                        {% endfor %}
-                                    </div>
-                                    
-                                </div><!-- End .cart-product -->
-
-                                <div class="dropdown-cart-total">
-                                    <span>Total</span>
-
-                                    <span class="cart-total-price">$160.00</span>
-                                </div><!-- End .dropdown-cart-total -->
-
-                                <div class="dropdown-cart-action">
-                                    <a href="{% url 'cart' %}" class="btn btn-primary">View Cart</a>
-                                    <a href="ceckout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
-                                </div><!-- End .dropdown-cart-total -->
-                            </div><!-- End .dropdown-menu -->
                         </div><!-- End .cart-dropdown -->
                     </div><!-- End .header-right -->
                 </div><!-- End .container -->
@@ -367,26 +341,77 @@
     <script src="{% static 'assets/js/nouislider.min.js' %}"></script>
     <!-- Main JS File -->
     <script src="{% static 'assets/js/main.js' %}"></script>
+
     
-    <script>
-        // Получаем ссылку на элемент для работы с результатами поиска
-        var searchResults = document.getElementById("searchResults");
-        
-        // Выполнение поиска с использованием AJAX
-        function search() {
-          var query = document.getElementById("q").value;
-          if (query) {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                searchResults.innerHTML = xhr.responseText;
-              }
-            };
-            xhr.open("GET", "{% url 'product_search' %}?q=" + query, true);
-            xhr.send();
-          }
-        }
-        </script>
+
+<style>
+    /* Стили для кнопки закрытия модального окна */
+.close {
+    font-size: 30px; /* Размер шрифта */
+    width: 40px; /* Ширина кнопки */
+    height: 40px; /* Высота кнопки */
+    line-height: 40px; /* Выравнивание текста по вертикали (центр) */
+    color: #625d5d; /* Цвет текста */
+    background-color: #625d5d; /* Цвет фона */
+    text-align: center; /* Выравнивание текста по горизонтали (центр) */
+    border-radius: 50%; /* Создание круглой кнопки */
+    cursor: pointer; /* Изменение курсора при наведении */
+}
+
+/* Стили для модального окна */
+.modal {
+    display: none; /* Скрываем модальное окно по умолчанию */
+    /* Другие стили по вашему выбору */
+}
+
+</style>
+
+<script>
+// Получаем ссылку на модальное окно и на элементы для работы с результатами поиска
+var modal = document.getElementById("searchModal");
+var searchResults = document.getElementById("searchResults");
+var span = document.getElementsByClassName("close")[0];
+
+// Когда пользователь нажимает на кнопку "Search"
+function openSearchModal() {
+  modal.style.display = "block";
+}
+
+// Когда пользователь нажимает на кнопку закрытия
+function closeSearchModal() {
+  modal.style.display = "none";
+  searchResults.innerHTML = ""; // Очищаем результаты поиска при закрытии окна
+}
+
+// Когда пользователь щелкает вне модального окна, оно закрывается
+window.onclick = function(event) {
+  if (event.target == modal) {
+    closeSearchModal();
+  }
+}
+
+// Функция для обновления элемента "searchResults" с результатами поиска
+function updateSearchResults(resultsHTML) {
+  searchResults.innerHTML = resultsHTML;
+  openSearchModal(); // Открываем модальное окно с результатами
+}
+
+// Выполнение поиска с использованием AJAX
+function search() {
+  var query = document.getElementById("q").value;
+  if (query) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        updateSearchResults(xhr.responseText); // Обновляем результаты поиска
+      }
+    };
+    xhr.open("GET", "{% url 'product_search' %}?q=" + query, true);
+    xhr.send();
+  }
+}
+</script>
+
         
 </body>
 </html>
