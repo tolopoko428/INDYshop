@@ -108,3 +108,8 @@ class AdminCart(admin.ModelAdmin):
 class AdminCartItem(admin.ModelAdmin):
     list_display = ('cart', 'product', 'quantity',)
 
+
+@admin.register(ShippingOption)
+class AdminShippingOption(admin.ModelAdmin):
+    list_display = ('name', 'price', 'description')
+

@@ -11,18 +11,3 @@ def cart_items(request):
         cart_count = sum(item.quantity for item in cart_items)
 
     return {'cart_count': cart_count}
-
-
-def views_cart_low(request):
-    user = request.user
-
-    if not user.is_authenticated:
-        return redirect('error')
-
-    cart_item = Cart.objects.filter(user=user)
-
-    context = {
-        'cart_item': cart_item,
-    }
-
-    return context

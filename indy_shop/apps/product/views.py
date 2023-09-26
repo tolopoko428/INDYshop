@@ -7,7 +7,10 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import HttpResponse
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from .forms import *
+from django.apps import apps
 # Create your views here.
 
 
@@ -36,9 +39,14 @@ def remove_from_order(request, product_id):
     pass
 
 
+
+
+
 @login_required
 def view_orders(request):
     pass
+
+ 
 
 
 
@@ -79,6 +87,78 @@ def remove_favorite_list(request, pk):
 
 
 @login_required
+def checkout(request):
+    user = request.user
+    cart_items = CartItem.objects.filter(cart__user=user)
+
+    # Получите выбранный способ доставки из GET-параметров запроса
+    selected_shipping_option_id = request.GET.get('shipping_option_id')
+    selected_shipping_option = None
+
+    if selected_shipping_option_id:
+        try:
+            selected_shipping_option = ShippingOption.objects.get(id=selected_shipping_option_id)
+        except ShippingOption.DoesNotExist:
+            pass
+
+    # Извлеките значения total_price и другие атрибуты из корзины
+    total_price = sum(cart_item.get_total_price() for cart_item in cart_items if cart_item.product.price)
+    total_cost = total_price  # Изначально total_cost равен total_price без учета доставки
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST, user=request.user)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = user
+
+            # Установите выбранный способ доставки в заказ
+            if selected_shipping_option:
+                order.shipping_option = selected_shipping_option
+                shipping_cost = selected_shipping_option.price
+            else:
+                shipping_cost = 0
+
+            # Обновите total_cost с учетом стоимости доставки
+            total_cost = total_price + shipping_cost
+
+            order.total_price = total_price
+            order.total_cost = total_cost
+
+            order.save()
+
+            for cart_item in cart_items:
+                order_item = OrderItem(
+                    order=order,
+                    product=cart_item.product,
+                    quantity=cart_item.quantity
+                )
+                order_item.save()
+            cart_items.delete()
+            return redirect('success_page')
+    else:
+        form = OrderForm(user=request.user)
+
+    
+    if selected_shipping_option:
+        shipping_cost = selected_shipping_option.price
+    else:
+        shipping_cost = 0
+
+            # Обновите total_cost с учетом стоимости доставки
+    total_cost = total_price + shipping_cost
+
+    context = {
+        'form': form,
+        'cart_items': cart_items,
+        'selected_shipping_option': selected_shipping_option,
+        'total_price': total_price,
+        'total_cost': total_cost,
+    }
+    return render(request, 'checkout.html', context)
+
+
+
+@login_required
 def views_cart(request):
     template_name = 'cart.html'
     user = request.user
@@ -87,11 +167,18 @@ def views_cart(request):
 
     total_price = sum(cart_item.get_total_price() for cart_item in cart_items if cart_item.product.price)
 
-    shipping_cost = 0
-    if total_price >= 10:
-        shipping_cost = 0
-    else:
-        shipping_cost = 10 if total_price < 10 else 20
+    # Передайте форму ShippingOptionForm в контекст для отображения в шаблоне
+    shipping_option_form = ShippingOptionForm(request.POST or None)
+
+    shipping_cost = 0  # По умолчанию стоимость доставки равна 0
+
+    if request.method == 'POST':
+        if shipping_option_form.is_valid():
+            request.session['total_price'] = total_price
+            request.session['total_cost'] = total_cost
+            selected_shipping_option = shipping_option_form.cleaned_data['shipping_option']
+            shipping_cost = selected_shipping_option.price
+            request.session['selected_shipping_option_id'] = selected_shipping_option.id
 
     total_cost = total_price + shipping_cost
 
@@ -100,12 +187,21 @@ def views_cart(request):
         'total_price': total_price,
         'shipping_cost': shipping_cost,
         'total_cost': total_cost,
+        'shipping_option_form': shipping_option_form,
     }
 
     return render(request, template_name, context)
 
 
-
+@receiver(post_save, sender=ShippingOption)
+def update_shipping_cost(sender, instance, **kwargs):
+    if instance.name == "Бесплатная стандартная":
+        instance.shipping_cost = 0
+    elif instance.name == "Стандартная доставка":
+        instance.shipping_cost = 10.00
+    elif instance.name == "Быстрая доставка":
+        instance.shipping_cost = 20.00
+app_config = apps.get_containing_app_config(__file__)
 
 
 @login_required

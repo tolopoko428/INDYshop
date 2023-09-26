@@ -92,18 +92,18 @@
                                         </table>
                                     </div>
 
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="free-shipping" name="shipping" class="custom-control-input" data-cost="0">
-                                        <label class="custom-control-label" for="free-shipping">Бесплатнная Доставки</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="standard-shipping" name="shipping" class="custom-control-input" data-cost="10">
-                                        <label class="custom-control-label" for="standard-shipping">Стандартная Доставка: $10.00</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="express-shipping" name="shipping" class="custom-control-input" data-cost="20">
-                                        <label class="custom-control-label" for="express-shipping">Быстрая Доставка: $20.00</label>
-                                    </div>
+                                    <form action="{% url 'checkout' %}" method="get">
+                                        <div class="shipping-options">
+                                            <!-- Выводим способы доставки с радиокнопками и их ценами -->
+                                            {% for shipping_option in shipping_option_form.shipping_option.field.queryset %}
+                                                <label>
+                                                    <input type="radio" name="shipping_option_id" value="{{ shipping_option.id }}">
+                                                    {{ shipping_option.name }} - ${{ shipping_option.price }}
+                                                </label>
+                                            {% endfor %}
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">Оформить заказ</button>
+                                    </form>
                                     
 	                						<tr class="summary-shipping-estimate">
 	                							<a href="dashboard.html">Изменить Адрес</a></td>
@@ -112,7 +112,6 @@
 	                					</tbody>
 	                				</table><!-- End .table table-summary -->
 
-	                				<a href="{% url 'error' %}" class="btn btn-outline-primary-2 btn-order btn-block">Оформить Заказ</a>
 	                			</div><!-- End .summary -->
 
 		            			<a href="{% url 'empty-paht' %}" class="btn btn-outline-dark-2 btn-block mb-3"><span>Продолжить Покупку</span><i class="icon-refresh"></i></a>
@@ -310,7 +309,7 @@
     
         // Получить выбранный способ доставки и его стоимость
         const selectedShipping = document.querySelector('input[name="shipping"]:checked');
-        const shippingCostOption = parseFloat(selectedShipping.getAttribute('data-cost'));
+        const shippingCostOption = parseFloat(selectedShipping.value);
     
         // Вычислить сумму доставки
         const shippingCost = shippingCostOption;
@@ -331,7 +330,8 @@
     
     // Вызвать функцию обновления при загрузке страницы
     updateTotal();
-    </script>
+</script>
+
     
 
 

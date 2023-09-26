@@ -89,9 +89,10 @@ class ProductImage(models.Model):
 
 # Model for Order
 class Orders(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
     total_amount = models.IntegerField()
     status = models.CharField(max_length=20, choices=[
+        ('Новый Заказ', 'Новый Заказ'),
         ('Обработка', 'Обработка'),
         ('В пути', 'В пути'),
         ('Доставлено', 'Доставлено')
@@ -183,4 +184,24 @@ class Color(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+
+class ShippingOption(models.Model):
+    name = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=10, decimal_places=2) 
+    description = models.TextField(blank=True, null=True)
+    shipping_cost = models.DecimalField(
+        ('Способ доставки'),
+        max_digits=10,
+        decimal_places=2,
+        default=0)
+
+    class Meta:
+        verbose_name = 'Способ доставки'
+        verbose_name_plural = 'Способы доставки'
+
+    def __str__(self):
+        return self.name 
+
 
