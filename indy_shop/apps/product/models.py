@@ -1,6 +1,8 @@
 from django.db import models
 from apps.account.models import User
 from django.core.validators import MaxValueValidator
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 SIZE_CHOICES = [
     ('XS', 'XS'),
@@ -67,7 +69,6 @@ class Product(models.Model):
     @property
     def get_image(self):
         images = self.image.all()
-        print(images)
         if images:
             images = list(images)
             return images[0].image.url
@@ -90,15 +91,18 @@ class ProductImage(models.Model):
 # Model for Order
 class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
-    total_amount = models.IntegerField()
     status = models.CharField(max_length=20, choices=[
         ('Новый Заказ', 'Новый Заказ'),
         ('Обработка', 'Обработка'),
         ('В пути', 'В пути'),
-        ('Доставлено', 'Доставлено')
-    ], default='Обработка')
+        ('Доставлено', 'Доставлено'),
+        ('Отменен', 'Отменен'),
+    ], default='Новый Заказ')
     created_at = models.DateTimeField(auto_now_add=True)
     postal_code = models.CharField(max_length=10, null=True)
+    orders_text = models.TextField(null=True, blank=True)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    shipping_option = models.ForeignKey('ShippingOption', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name = 'Заказ'
@@ -106,7 +110,7 @@ class Orders(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Order #{self.id} by {self.user_id.email}"
+        return f"Order #{self.id} by {self.user.email}"
 
 
 
@@ -159,6 +163,7 @@ class CartItem(models.Model):
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     total = models.IntegerField(null=True, blank=True)
+    order = models.ForeignKey(Orders, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Элемент Карзина'
@@ -203,5 +208,3 @@ class ShippingOption(models.Model):
 
     def __str__(self):
         return self.name 
-
-

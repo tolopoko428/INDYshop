@@ -23,10 +23,63 @@
             <div class="page-content">
                 <div class="container">
                     <div class="products">
-                        <button><a href="{% url 'add_product' %}" class="btn-product btn-cart" style="text-align: center; display: block"><span>add to cart</span></a></button>
-                        {% if request.user.is_superuser %}
-                            <a href="{% url 'personal_registration' %}" id="openModalBtn" class="register-button">Зарегистрировать новый персонал</a>
-                        {% endif %}
+
+                        <head>
+                            <title>Боковая панель с подсветкой ссылок</title>
+                            <style>
+                                /* Стили для боковой панели */
+                                .sidebar {
+                                    position: fixed;
+                                    top: 0;
+                                    left: -250px; /* Задаем начальное смещение, чтобы скрыть панель */
+                                    width: 250px;
+                                    height: 100%;
+                                    background-color: #ffffff;
+                                    color: #fff;
+                                    transition: left 0.3s ease;
+                                    overflow-y: scroll; /* Добавляем прокрутку, если контент слишком длинный */
+                                }
+                        
+                                .sidebar.open {
+                                    left: 0; /* Открываем панель */
+                                }
+                        
+                                /* Стили для ссылок */
+                                .sidebar a {
+                                    display: block;
+                                    padding: 10px;
+                                    text-decoration: none;
+                                    color: #6c6161;
+                                    transition: background-color 0.3s ease; /* Добавляем анимацию изменения фона */
+                                }
+                        
+                                /* Подсветка ссылок при наведении */
+                                .sidebar a:hover {
+                                    background-color: #dbc6a3; /* Изменяем фон при наведении */
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <!-- Создаем боковую панель и кнопку для открытия/закрытия панели -->
+                            <div class="sidebar" id="mySidebar">
+                                <a href="{% url 'add_product' %}" class="btn-product btn-cart" style="text-align: center; display: block"><span>Добавть Продукт</span></a>
+                                {% if request.user.is_superuser %}
+                                <a href="{% url 'personal_registration' %}" id="openModalBtn">Зарегистрировать новый персонал</a>
+                                {% endif %}
+                                <a href="{% url 'not_active_products' %}">Все не актывные продукты</a>
+                                <a  href="{% url 'admin_order_list' %}">Все Заказы</a>
+                            </div>
+                            
+                        
+                            <button class="btn btn-outline-dark btn-rounded" onclick="toggleSidebar()">Прочее</button>
+                        
+                            <script>
+                                function toggleSidebar() {
+                                    var sidebar = document.getElementById('mySidebar');
+                                    sidebar.classList.toggle('open');
+                                }
+                            </script>
+                        </body>
                         <div class="row">
                             {% for product in products %}
                                 <div class="col-6 col-md-4 col-lg-4 col-xl-3">
@@ -37,6 +90,19 @@
                                             {% elif product.is_new %}
                                                 <span class="product-label label-new">New</span>
                                             {% endif %}
+
+                                            <div class="product-action-vertical">
+                                                <a href="{% url 'status_update' product.id %}" class="btn-product-icon btn-expandable">
+                                                    <span>
+                                                        {% if product.status == 'in_stock' %}
+                                                            Деактивировать 
+                                                        {% else %}
+                                                            Активировать 
+                                                        {% endif %}
+                                                    </span>
+                                                </a>
+                                            </div>
+                                            
                                             
                                             <a href="{% url 'admin_detail_post' product.pk %}">
                                                               
@@ -44,8 +110,17 @@
                                                 
                                             </a>                                        
                                         <div class="product-action action-icon-top">
-                                            <a href="{% url 'update_product' product_id=product.id %}" class="btn"><span>Редактировать</span></a>
-                                            <a href="{% url 'delete_product' pk=product.pk %}" class="btn-comp"><span>Удалить</span></a>
+                                            <a href="{% url 'update_product' product_id=product.id %}" class="btn-product"><span>Редактировать</span></a>
+                                            <a href="{% url 'status_update' product.id %}" class="btn-product">
+                                                <span>
+                                                    {% if product.status == 'in_stock' %}
+                                                        Деактивировать 
+                                                    {% else %}
+                                                        Активировать 
+                                                    {% endif %}
+                                                </span>
+                                            </a>
+                                            <a href="{% url 'delete_product' pk=product.pk %}" class="btn-product"><span>Удалить</span></a>                                          
                                         </div><!-- End .product-action -->
                                     </figure><!-- End .product-media -->
                                     <div class="product-body">
@@ -54,7 +129,12 @@
                                         </div><!-- End .product-cat -->
                                         <h3 class="product-title"><a href="{% url 'product_detail' product.pk %}">{{ product.title }}</a></h3><!-- End .product-title -->
                                         <div class="product-price">
-                                            ${{ product.price }}
+                                            {% if product.is_top %}
+                                                <p class="old-price">${{ product.old_price }}</p>
+                                                <p class="new-price">${{ product.new_price }}</p>
+                                            {% else %}
+                                            <a>{{ product.price }}</a>
+                                            {% endif %}
                                           </div><!-- End .product-price -->
                                         <div class="ratings-container">
                                             <div class="ratings">

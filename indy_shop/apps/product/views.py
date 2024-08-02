@@ -1,56 +1,71 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from apps.admin_panel.forms import CreateProductForm, ProductEditForm
-from datetime import datetime, timedelta
-from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test
 from .models import *
 from django.contrib.auth.decorators import login_required
-from django.template.loader import render_to_string
-from django.http import HttpResponse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .forms import *
 from django.apps import apps
+from ..account.views import is_logged_in
 # Create your views here.
 
 
 def all_products(request):
-    products = Product.objects.all()
-    return render(request, 'all_products.html', {'products': products})
+    category = request.GET.get('category')
+    size = request.GET.get('size')
+    color = request.GET.get('color')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+
+    products = Product.objects.filter(status='in_stock')
+
+    if category:
+        products = products.filter(category__name=category)
+    if size:
+        products = products.filter(size__name=size)
+    if color:
+        products = products.filter(color__name=color)
+    if min_price:
+        products = products.filter(price__gte=min_price)
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    for product in products:
+        # Вычислите скидку и общую цену для каждого продукта
+        if product.is_top:
+            product.old_price = product.price
+            product.new_price = product.price - product.discount
+        else:
+            product.old_price = None
+            product.new_price = None
+
+    context = {
+        'filtered_products': products,
+    }
+    return render(request, 'all_products.html', context)
+
 
 
 
 def detail_product(request, pk):
     template_name = 'detail_product.html'
     product = get_object_or_404(Product, pk=pk)
-    return render(request, template_name, {'product': product})
 
+    # Рассчитать старую цену на основе скидки и текущей цены
+    old_price = product.price - product.discount if product.is_top else None
+    new_price = product.price if product.is_top else None
 
-
-# @login_required
-# def create_order(request, product_id):
-
-
-
-
-
-@login_required
-def remove_from_order(request, product_id):
-    pass
+    context = {
+        'product': product,
+        'old_price': old_price,
+        'new_price': new_price,
+    }
+    
+    return render(request, template_name, context)
 
 
 
 
-
-@login_required
-def view_orders(request):
-    pass
-
- 
-
-
-
-@login_required
+@is_logged_in
 def add_to_favorites(request, product_id):
     user = request.user
     product = get_object_or_404(Product, pk=product_id)
@@ -66,7 +81,7 @@ def add_to_favorites(request, product_id):
 
 
 
-@login_required
+@is_logged_in
 def view_favorites(request):
     user = request.user
     favorites = FavoriteProduct.objects.filter(user_id=user)
@@ -75,7 +90,7 @@ def view_favorites(request):
 
 
 
-@login_required
+@is_logged_in
 def remove_favorite_list(request, pk):
     user = request.user
     product = get_object_or_404(Product, pk=pk)
@@ -86,12 +101,11 @@ def remove_favorite_list(request, pk):
 
 
 
-@login_required
+@is_logged_in
 def checkout(request):
     user = request.user
     cart_items = CartItem.objects.filter(cart__user=user)
 
-    # Получите выбранный способ доставки из GET-параметров запроса
     selected_shipping_option_id = request.GET.get('shipping_option_id')
     selected_shipping_option = None
 
@@ -101,50 +115,62 @@ def checkout(request):
         except ShippingOption.DoesNotExist:
             pass
 
-    # Извлеките значения total_price и другие атрибуты из корзины
-    total_price = sum(cart_item.get_total_price() for cart_item in cart_items if cart_item.product.price)
-    total_cost = total_price  # Изначально total_cost равен total_price без учета доставки
+    total_price = sum(cart_item.get_total_price() for cart_item in cart_items)
+    total_cost = total_price
 
     if request.method == 'POST':
-        form = OrderForm(request.POST, user=request.user)
+        form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
             order.user = user
 
-            # Установите выбранный способ доставки в заказ
-            if selected_shipping_option:
-                order.shipping_option = selected_shipping_option
-                shipping_cost = selected_shipping_option.price
-            else:
-                shipping_cost = 0
+            if not user.first_name:
+                user.first_name = form.cleaned_data['first_name']
+            if not user.last_name:
+                user.last_name = form.cleaned_data['last_name']
+            if not user.mobile:
+                user.mobile = form.cleaned_data['mobile']
+            if not user.address:
+                user.address = form.cleaned_data['address']
+            user.save()
 
-            # Обновите total_cost с учетом стоимости доставки
+            selected_shipping_option_id = request.POST.get("shipping_option_id")
+            order.shipping_option_id = selected_shipping_option_id
+
+            if selected_shipping_option_id is None:
+                selected_shipping_option = ShippingOption.objects.get(id=7)
+            else:
+                selected_shipping_option = ShippingOption.objects.get(id=selected_shipping_option_id)
+            
+            shipping_cost = selected_shipping_option.price if selected_shipping_option else 0
             total_cost = total_price + shipping_cost
 
-            order.total_price = total_price
             order.total_cost = total_cost
-
             order.save()
 
             for cart_item in cart_items:
-                order_item = OrderItem(
-                    order=order,
-                    product=cart_item.product,
+                OrderItem.objects.create(
+                    order_id=order,
+                    order_item_id=cart_item.product,
                     quantity=cart_item.quantity
                 )
-                order_item.save()
             cart_items.delete()
-            return redirect('success_page')
-    else:
-        form = OrderForm(user=request.user)
+            return redirect('empty-paht')
 
-    
+    else:
+        form = OrderForm()
+
+    if not selected_shipping_option:
+        try:
+            selected_shipping_option = ShippingOption.objects.get(id=7)
+        except ShippingOption.DoesNotExist:
+            pass
+
     if selected_shipping_option:
         shipping_cost = selected_shipping_option.price
     else:
         shipping_cost = 0
 
-            # Обновите total_cost с учетом стоимости доставки
     total_cost = total_price + shipping_cost
 
     context = {
@@ -154,33 +180,30 @@ def checkout(request):
         'total_price': total_price,
         'total_cost': total_cost,
     }
+
     return render(request, 'checkout.html', context)
 
 
-
-@login_required
+@is_logged_in
 def views_cart(request):
     template_name = 'cart.html'
     user = request.user
-
     cart_items = CartItem.objects.filter(cart__user=user)
-
-    total_price = sum(cart_item.get_total_price() for cart_item in cart_items if cart_item.product.price)
-
-    # Передайте форму ShippingOptionForm в контекст для отображения в шаблоне
+    total_price = sum(cart_item.product.price * cart_item.quantity for cart_item in cart_items)
+    total_quantity = sum(cart_item.quantity for cart_item in cart_items)
     shipping_option_form = ShippingOptionForm(request.POST or None)
-
-    shipping_cost = 0  # По умолчанию стоимость доставки равна 0
+    shipping_cost = 0  
+    total_cost = total_price 
 
     if request.method == 'POST':
         if shipping_option_form.is_valid():
-            request.session['total_price'] = total_price
-            request.session['total_cost'] = total_cost
             selected_shipping_option = shipping_option_form.cleaned_data['shipping_option']
             shipping_cost = selected_shipping_option.price
-            request.session['selected_shipping_option_id'] = selected_shipping_option.id
+            total_cost += shipping_cost
 
-    total_cost = total_price + shipping_cost
+            request.session['total_price'] = total_price
+            request.session['total_cost'] = total_cost
+            request.session['selected_shipping_option_id'] = selected_shipping_option.id
 
     context = {
         'cart_items': cart_items,
@@ -188,9 +211,12 @@ def views_cart(request):
         'shipping_cost': shipping_cost,
         'total_cost': total_cost,
         'shipping_option_form': shipping_option_form,
+        'total_quantity': total_quantity,  
     }
 
     return render(request, template_name, context)
+
+
 
 
 @receiver(post_save, sender=ShippingOption)
@@ -204,9 +230,9 @@ def update_shipping_cost(sender, instance, **kwargs):
 app_config = apps.get_containing_app_config(__file__)
 
 
-@login_required
+@is_logged_in
 def add_to_cart(request, product_id):
-    if request.method == 'POST' or request.method == 'GET':
+    if request.method == 'POST':
         quantity = int(request.POST.get('quantity', 1))
         user = request.user
         try:
@@ -218,13 +244,16 @@ def add_to_cart(request, product_id):
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
         if not created:
             cart_item.quantity += quantity
-            cart_item.save()
+        else:
+            cart_item.quantity = quantity
+        cart_item.save()
 
     return redirect('empty-paht')
 
 
 
-@login_required
+
+@is_logged_in
 def remove_from_cart(request, product_id):
     user = request.user
     cart = Cart.objects.get(user=user)
@@ -234,7 +263,7 @@ def remove_from_cart(request, product_id):
 
 
 
-@login_required
+@is_logged_in
 def clear_cart(request):
     user = request.user
 
@@ -251,3 +280,44 @@ def product_search(request):
     results = Product.objects.filter(title__icontains=query)
     return render(request, 'search_results.html', {'results': results, 'query': query})
 
+
+
+@is_logged_in
+def order_detail(request, order_id):
+    try:
+        order = Orders.objects.get(id=order_id)
+    except Orders.DoesNotExist:
+        order = None
+
+    context = {
+        'order': order,
+    }
+
+    return render(request, 'order_detail.html', context)
+
+
+
+@is_logged_in
+def order_list(request, user_id):
+    user_orders = Orders.objects.filter(user_id=user_id).exclude(status='Отменен')
+    context = {
+        'orders': user_orders,
+    }
+    return render(request, 'order_list.html', context)
+
+
+
+@is_logged_in
+def cancel_order(request, order_id):
+    try:
+        order = Orders.objects.get(id=order_id)
+        if order.status == 'Новый Заказ':
+            if request.method == 'POST':
+                order.status = 'Отменен'
+                order.save()
+                return redirect('order_list', user_id=order.user_id)
+            return render(request, 'order_cancel_confirm.html', {'order': order})
+        else:
+            return render(request, 'order_cancel_error.html', {'order': order})
+    except Orders.DoesNotExist:
+        return redirect('empty-path')

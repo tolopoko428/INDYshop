@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<a style="text-align: center; display: block; font-size: 40px;">Профиль пользователя</a>
+
+<table class="table table-wishlist table-mobile">
+    <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Адрес</th>
+            <th>Телефон</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ user.first_name }} {{ user.last_name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.address }}</td>
+            <td>{{ user.mobile }}</td>
+        </tr>
+    </tbody>
+</table>
+<a style="text-align: center; display: block; font-size: 30px;">Заказ</a>
+
+<table class="table table-wishlist table-mobile">
+    <thead>
+        <tr>
+            <th>Заказ №</th>
+            <th>Статус заказа</th>
+            <th>Выбранный способ доставки</th>
+            <th>Дата создания</th>
+            <th>Общая стоимость</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.shipping_option }}</td>
+            <td>{{ order.created_at }}</td>
+            <td>${{ order.total_cost }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a style="text-align: center; display: block; font-size: 25px;">Детали заказа</a>
+{% for order in orders %}
+<table class="table table-wishlist table-mobile">
+    <thead>
+        <tr>
+            <th>Продукт</th>
+            <th>Количество</th>
+            <th>Дата создания</th>
+            <th>Дата обновления</th>
+            <th>Категория продукта</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.order_items.all %}
+        <tr>
+            <td>{{ item.order_item_id.title }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.order_item_id.created_at }}</td>
+            <td>{{ item.update_at }}</td>
+            <td>{{ item.order_item_id.category.name }}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+{% endfor %}
+<a style="text-align: center; display: block; font-size: 20px;">Прочие данные</a>
+<table class="table table-wishlist table-mobile">
+    <thead>
+        <tr>
+            <th>Атрибут</th>
+            <th>Значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Почтовый индекс</td>
+            <td>{{ postal_code }}</td>
+        </tr>
+        <tr>
+            <td>Коменттарий заказа</td>
+            <td>{{ orders_text }}</td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}

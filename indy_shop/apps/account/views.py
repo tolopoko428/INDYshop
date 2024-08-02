@@ -5,14 +5,22 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
 # Create your views here.
 
 from apps.account.forms import *
 from apps.account.models import User
-from apps.product.models import Product
+from functools import wraps
+
+
+def is_logged_in(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect('login')  
+    return _wrapped_view
+
 
 class LoginView(FormView):
     form_class = LoginForm
@@ -67,14 +75,14 @@ def index(request):
 
 
 
-@login_required
+@is_logged_in
 def dashboard(request):
     template_name = 'dashboard.html'
     return render(request, template_name)
   
 
 
-@login_required
+@is_logged_in
 def update_profile(request):
     template_name = 'dashboard.html'
     if request.method == 'POST':
@@ -102,7 +110,7 @@ def update_profile(request):
     return render(request, template_name, context)
 
 
-@login_required
+@is_logged_in
 def edit_address(request):
     user = request.user
     template_name = 'edit_address.html'

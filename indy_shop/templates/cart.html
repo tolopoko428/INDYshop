@@ -12,7 +12,7 @@
             <nav aria-label="breadcrumb" class="breadcrumb-nav">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="">Дом</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'empty-paht' %}">Дом</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Корзина</li>
                     </ol>
                 </div><!-- End .container -->
@@ -21,6 +21,7 @@
             <div class="page-content">
             	<div class="cart">
 	                <div class="container">
+                        {% if cart_items %}
 	                	<div class="row">
 	                		<div class="col-lg-9">
 	                			<table class="table table-cart table-mobile">
@@ -45,7 +46,7 @@
                                                             </a>
                                                         </figure>
                                                         <h3 class="product-title">
-                                                    <a href="#">{{ cart_item.product.title }}</a>
+                                                    <a href="">{{ cart_item.product.title }}</a>
                                                 </h3>
                                             </div>
                                         </td>
@@ -82,13 +83,13 @@
                                                 </tr>
                                                 <tr class="summary-shipping">
                                                     <td>Сумма Доставки:</td>
-                                                    <td id="shipping">$0.00</td>
+                                                    <td id="shipping">${{ shipping_cost }}</td>
                                                 </tr>                                                
                                                 <tr class="summary-total">
                                                     <td>Итоговая Сумма:</td>
                                                     <td id="total">${{ total_cost }}</td>
                                                 </tr>                                                
-                                            </tbody>
+                                            </tbody>                                            
                                         </table>
                                     </div>
 
@@ -97,7 +98,7 @@
                                             <!-- Выводим способы доставки с радиокнопками и их ценами -->
                                             {% for shipping_option in shipping_option_form.shipping_option.field.queryset %}
                                                 <label>
-                                                    <input type="radio" name="shipping_option_id" value="{{ shipping_option.id }}">
+                                                    <input type="radio" name="shipping_option_id" value="{{ shipping_option.id }}" data-price="{{ shipping_option.price }}">
                                                     {{ shipping_option.name }} - ${{ shipping_option.price }}
                                                 </label>
                                             {% endfor %}
@@ -116,6 +117,9 @@
 
 		            			<a href="{% url 'empty-paht' %}" class="btn btn-outline-dark-2 btn-block mb-3"><span>Продолжить Покупку</span><i class="icon-refresh"></i></a>
 	                		</aside><!-- End .col-lg-3 -->
+                        {% else %}
+                        <a style="text-align: center; display: block; font-size: 17px;">Корзина пуста. Добавьте товары в корзину, чтобы оформить заказ</a>
+                        {% endif %}
 	                	</div><!-- End .row -->
 	                </div><!-- End .container -->
                 </div><!-- End .cart -->
@@ -306,31 +310,32 @@
     function updateTotal() {
         // Получить значение итоговой стоимости
         const subtotal = parseFloat(document.getElementById('subtotal').textContent.replace('$', ''));
-    
+
         // Получить выбранный способ доставки и его стоимость
-        const selectedShipping = document.querySelector('input[name="shipping"]:checked');
-        const shippingCostOption = parseFloat(selectedShipping.value);
-    
+        const selectedShippingOption = document.querySelector('input[name="shipping_option_id"]:checked');
+        const shippingCostOption = parseFloat(selectedShippingOption.getAttribute('data-price'));
+
         // Вычислить сумму доставки
         const shippingCost = shippingCostOption;
-    
+
         // Вычислить итоговую стоимость
         const total = subtotal + shippingCost;
-    
+
         // Обновить элементы с итоговой стоимостью и суммой доставки
         document.getElementById('shipping').textContent = '$' + shippingCost.toFixed(2);
         document.getElementById('total').textContent = '$' + total.toFixed(2);
     }
-    
+
+    // Вызвать функцию обновления при загрузке страницы
+    window.addEventListener('load', updateTotal);
+
     // Слушатель события для обновления при выборе способа доставки
-    const shippingInputs = document.querySelectorAll('input[name="shipping"]');
+    const shippingInputs = document.querySelectorAll('input[name="shipping_option_id"]');
     shippingInputs.forEach(input => {
         input.addEventListener('change', updateTotal);
     });
-    
-    // Вызвать функцию обновления при загрузке страницы
-    updateTotal();
 </script>
+
 
     
 

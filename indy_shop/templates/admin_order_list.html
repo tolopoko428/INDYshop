@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block content %}
+<head>
+    <title>Список заказов</title>
+</head>
+<body>
+    {% if pending_orders %}
+    <a style="text-align: center; display: block; font-size: 40px;">Список заказов</a>
+    <table class="table table-wishlist table-mobile">
+        <thead>
+            <tr>
+                <th>Заказ №</th>
+                <th>Пользователь</th>
+                <th>Статус заказа</th>
+                <th>Продукт</th>
+                <th>Количество</th>
+                <th>Общая стоимость</th>
+                <th>Выбранный способ доставки</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in pending_orders %}
+            <tr>
+                <td>
+                    {{ order.id }}
+                </td>
+                <td><a href="{% url 'user_profile' user_id=order.user.id %}">{{ order.user.email }}</a></td>
+                <td>{{ order.status }}</td>
+                <td></td> <!-- Здесь можно оставить пустую ячейку, так как не выводим продукты -->
+                <td></td>
+                <td>${{ order.total_cost }}</td>
+                <td>{{ order.shipping_option }}</td>
+                <td>
+                    <form method="post" action="{% url 'admin_update_order_status' order.id %}">
+                        {% csrf_token %}
+                        <!-- Добавьте здесь вашу логику для заказов с другими статусами -->
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    
+    {% if delivered_orders %}
+    <a style="text-align: center; display: block; font-size: 30px;">Доставленные заказы</a>
+    <table class="table table-wishlist table-mobile">
+        <thead>
+            <tr>
+                <th>Заказ №</th>
+                <th>Пользователь</th>
+                <th>Статус заказа</th>
+                <th>Продукт</th>
+                <th>Количество</th>
+                <th>Общая стоимость</th>
+                <th>Выбранный способ доставки</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in delivered_orders %}
+            <tr>
+                <td>
+                    {{ order.id }}
+                </td>
+                <td><a href="{% url 'user_profile' user_id=order.user.id %}">{{ order.user.email }}</a></td>
+                <td>{{ order.status }}</td>
+                <td></td> <!-- Здесь можно оставить пустую ячейку, так как не выводим продукты -->
+                <td></td>
+                <td>${{ order.total_cost }}</td>
+                <td>{{ order.shipping_option }}</td>
+                <td>
+                    <form method="post" action="{% url 'admin_update_order_status' order.id %}">
+                        {% csrf_token %}
+                        <!-- Добавьте здесь вашу логику для доставленных заказов -->
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    
+    {% if cancelled_orders %}
+    <a style="text-align: center; display: block; font-size: 30px;">Отмененные заказы</a>
+    <table class="table table-wishlist table-mobile">
+        <thead>
+            <tr>
+                <th>Заказ №</th>
+                <th>Пользователь</th>
+                <th>Статус заказа</th>
+                <th>Продукт</th>
+                <th>Количество</th>
+                <th>Общая стоимость</th>
+                <th>Выбранный способ доставки</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in cancelled_orders %}
+            <tr>
+                <td>
+                    {{ order.id }}
+                </td>
+                <td><a href="{% url 'user_profile' user_id=order.user.id %}">{{ order.user.email }}</a></td>
+                <td>{{ order.status }}</td>
+                <td></td> <!-- Здесь можно оставить пустую ячейку, так как не выводим продукты -->
+                <td></td>
+                <td>${{ order.total_cost }}</td>
+                <td>{{ order.shipping_option }}</td>
+                <td>
+                    <form method="post" action="{% url 'admin_update_order_status' order.id %}">
+                        {% csrf_token %}
+                        <!-- Добавьте здесь вашу логику для отмененных заказов -->
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</body>
+{% endblock %}

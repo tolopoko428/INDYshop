@@ -17,6 +17,8 @@
     <link rel="manifest" href="{% static 'assets/images/icons/site.html' %}">
     <link rel="mask-icon" href="{% static 'assets/images/icons/safari-pinned-tab.svg' %}" color="#666666">
     <link rel="shortcut icon" href="{% static 'assets/images/icons/favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <meta name="apple-mobile-web-app-title" content="Molla">
     <meta name="application-name" content="Molla">
     <meta name="msapplication-TileColor" content="#cc9966">
@@ -81,9 +83,8 @@
 
                         <div class="header-right">
                             <form class="header-search-wrapper">
-                                <label for="q" class="sr-only">Search</label>
+                                <label for="q" class="sr-only">Поиск</label>
                                 <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required onkeydown="if (event.keyCode === 13) { event.preventDefault(); search(); }">
-                                <button type="button" onclick="search()"><i class="icon-search"></i></button>
                             </form>
                         </div>
                         
@@ -119,7 +120,7 @@
 	            		<div class="col-sm-6 col-lg-3">
 	            			<div class="widget widget-about">
 	            				<img src="{% static 'assets/images/OFF.png' %}" class="footer-logo" alt="Footer Logo" width="105" height="25">
-	            				<p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. </p>
+	            				<p>OFF Zet стремится предоставить своим клиентам удобный и простой способ совершения покупок, предлагая качественные товары по доступным ценам. </p>
 
 	            				<div class="social-icons">
 	            					<a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
@@ -133,26 +134,26 @@
 
 	            		<div class="col-sm-6 col-lg-3">
 	            			<div class="widget">
-	            				<h4 class="widget-title">Useful Links</h4><!-- End .widget-title -->
+	            				<h4 class="widget-title">Полезные ссылки</h4><!-- End .widget-title -->
 
 	            				<ul class="widget-list">
-	            					<li><a href="{% url 'contact' %}">Contact us</a></li>
-	            					<li><a href="{% url 'login' %}">Log in</a></li>
+	            					<li><a href="{% url 'contact' %}">Контакты</a></li>
+	            					<li><a href="{% url 'login' %}">Войти</a></li>
 	            				</ul><!-- End .widget-list -->
 	            			</div><!-- End .widget -->
 	            		</div><!-- End .col-sm-6 col-lg-3 -->
-
-	            		<div class="col-sm-6 col-lg-3">
+                        
+                        <div class="col-sm-6 col-lg-3">
 	            			<div class="widget">
-	            				<h4 class="widget-title">Customer Service</h4><!-- End .widget-title -->
+	            				<h4 class="widget-title">Обслуживание клиентов</h4><!-- End .widget-title -->
 
 	            				<ul class="widget-list">
-	            					<li><a href="#">Payment Methods</a></li>
-	            					<li><a href="#">Money-back guarantee!</a></li>
-	            					<li><a href="#">Returns</a></li>
-	            					<li><a href="#">Shipping</a></li>
-	            					<li><a href="#">Terms and conditions</a></li>
-	            					<li><a href="#">Privacy Policy</a></li>
+	            					<li><a href="{% url 'error' %}">Способы оплаты</a></li>
+	            					<li><a href="{% url 'error' %}">Гарантия возврата денег!</a></li>
+	            					<li><a href="{% url 'error' %}">Возвращается</a></li>
+	            					<li><a href="{% url 'error' %}">Доставка</a></li>
+	            					<li><a href="{% url 'error' %}">Условия и положения</a></li>
+	            					<li><a href="{% url 'error' %}">политика конфиденциальности</a></li>
 	            				</ul><!-- End .widget-list -->
 	            			</div><!-- End .widget -->
 	            		</div><!-- End .col-sm-6 col-lg-3 -->
@@ -162,10 +163,10 @@
 	            				<h4 class="widget-title">Мой Аккаунт</h4><!-- End .widget-title -->
 
 	            				<ul class="widget-list">
-	            					<li><a href="{% url 'register' %}">Sign In</a></li>
-	            					<li><a href="{% url 'cart' %}">View Cart</a></li>
-	            					<li><a href="{% url 'wishlist' %}">My Wishlist</a></li>
-	            					<li><a href="#">Track My Order</a></li>
+	            					<li><a href="{% url 'register' %}">Зарегистрироваться</a></li>
+	            					<li><a href="{% url 'cart' %}">Корзина</a></li>
+	            					<li><a href="{% url 'wishlist' %}">Мои избранные</a></li>
+	            					<li><a href="#">Мои заказы</a></li>
 	            				</ul><!-- End .widget-list -->
 	            			</div><!-- End .widget -->
 	            		</div><!-- End .col-sm-6 col-lg-3 -->
@@ -334,13 +335,17 @@
     <script src="{% static 'assets/js/jquery.hoverIntent.min.js' %}"></script>
     <script src="{% static 'assets/js/jquery.waypoints.min.js' %}"></script>
     <script src="{% static 'assets/js/superfish.min.js' %}"></script>
-    <script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+    
+    <!-- Подключите Owl Carousel перед скриптом, который его использует -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    
     <script src="{% static 'assets/js/wNumb.js' %}"></script>
     <script src="{% static 'assets/js/bootstrap-input-spinner.js' %}"></script>
     <script src="{% static 'assets/js/jquery.magnific-popup.min.js' %}"></script>
     <script src="{% static 'assets/js/nouislider.min.js' %}"></script>
     <!-- Main JS File -->
     <script src="{% static 'assets/js/main.js' %}"></script>
+    
 
     
 

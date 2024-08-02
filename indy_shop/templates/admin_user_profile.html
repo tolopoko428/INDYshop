@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<a style="text-align: center; display: block; font-size: 40px;">Профиль пользователя</a>
+
+<table class="table table-wishlist table-mobile">
+    <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Адрес</th>
+            <th>Телефон</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ user.first_name }} {{ user.last_name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.address }}</td>
+            <td>{{ user.mobile }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<a style="text-align: center; display: block; font-size: 24px;">Заказы Пользователя</a>
+<table class="table table-wishlist table-mobile">
+    <thead>
+        <tr>
+            <th>Заказ №</th>
+            <th>Статус заказа</th>
+            <th>Общая стоимость</th>
+            <th>Выбранный способ доставки</th>
+            <th>Дата создания</th>
+            <th>Дата обновления</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.status }}</td>
+            <td>${{ order.total_cost }}</td>
+            <td>{{ order.shipping_option }}</td>
+            <td>{{ order.created_at }}</td>
+            <td>
+                {% for item in order.order_items.all %}
+                    {{ item.update_at }}<br>
+                {% endfor %}
+            </td>
+            <td>
+                <a href="{% url 'admin_update_order_status' order.id %}" class="btn btn-outline-primary-2">
+                    Изменить статус
+                </a>
+                <a href="{% url 'detail_order_user' user_id=user.id product_id=order.id %}" class="btn btn-outline-primary-2">
+                    Подробнее
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

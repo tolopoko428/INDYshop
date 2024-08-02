@@ -12,26 +12,18 @@ class ProductSearchForm(forms.Form):
 
 
 class OrderForm(forms.ModelForm):
-    user = get_user_model()
+    first_name = forms.CharField(max_length=30, required=False)
+    last_name = forms.CharField(max_length=30, required=False)
+    email = forms.EmailField(required=False)
+    address = forms.CharField(max_length=100, required=False)
+    mobile = forms.CharField(max_length=15, required=False)
+    postal_code = forms.CharField(max_length=10, required=False)
+    orders_text = forms.CharField(widget=forms.Textarea, required=False)
+    shipping_option_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = Orders
-        fields = ['total_amount', 'status', 'postal_code', 'user']
-
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-
-        if user:
-            # Устанавливаем пользователя по умолчанию в форме
-            self.fields['user'].initial = user
-        else:
-            # Если пользователя нет, поле пользователя становится обязательным
-            self.fields['user'].required = True
-
-    total_price = forms.DecimalField(widget=forms.HiddenInput, initial=0)
-    total_cost = forms.DecimalField(widget=forms.HiddenInput, initial=0)
-
+        fields = [ 'orders_text', 'postal_code']
 
 
 

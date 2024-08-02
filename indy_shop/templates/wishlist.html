@@ -20,6 +20,7 @@
 
             <div class="page-content">
             	<div class="container">
+                    {% if favorites %}
 					<table class="table table-wishlist table-mobile">
 						<thead>
 							<tr>
@@ -48,7 +49,6 @@
                                     </div><!-- End .product -->
                                 </td>
                                 <td class="price-col">${{ favorite_product.product.price }}</td>
-                                <td class="price-col">${{ favorite_product.product.price }}</td>
                                 <td class="stock-col">
                                     {% if favorite_product.product.quantity > 0 %}
                                         <span class="in-stock">Active</span>
@@ -58,20 +58,22 @@
                                 </td>
                                 <td class="action-col">
                                     {% if favorite_product.product.quantity > 0 %}
-                                        <button class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>Add to Cart</button>
+                                    <button class="btn btn-block btn-outline-primary-2">
+                                        <a href="{% url 'add_to_cart' favorite_product.product.pk %}">
+                                          <i class="icon-cart-plus"></i> Add to Cart
+                                        </a>
+                                      </button>
                                     {% else %}
                                         <button class="btn btn-block btn-outline-primary-2 disabled">Out of Stock</button>
                                     {% endif %}
                                     <td class="remove-col">
-
                                         <a href="{% url 'remove_favorite' favorite_product.product.pk %}">
                                             <button type="submit" class="btn-remove"><i class="icon-close"></i></button>
                                         </a>
                                     </td>
                                 </td>
-
-                                </tr>
-                                    {% endfor %}
+                            </tr>
+                            {% endfor %}
 						</tbody>
 					</table><!-- End .table table-wishlist -->
 	            	<div class="wishlist-share">
@@ -84,6 +86,9 @@
 	    					<a href="#" class="social-icon" title="Pinterest" target="_blank"><i class="icon-pinterest"></i></a>
 	    				</div><!-- End .soial-icons -->
 	            	</div><!-- End .wishlist-share -->
+                    {% else %}
+                        <a style="text-align: center; display: block; font-size: 15px;">Ваш список избранных товаров пуст</a>
+                    {% endif %}
             	</div><!-- End .container -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->

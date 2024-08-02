@@ -26,8 +26,7 @@ class MultipleFileField(forms.FileField):
 
 class CreateProductForm(forms.ModelForm):
     price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={"type": "number"}))
-    category_id = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label=None, label="Категория")
-    # images = forms.FileField(widget=MultipleFileInput(attrs={'multiple': True}))
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label=None, label="Категория")
     images = MultipleFileField()
     quantity = forms.IntegerField(initial=1)
     color = forms.ChoiceField(choices=COLOR_CHOICES, required=False, label="Цвет")  
@@ -36,7 +35,7 @@ class CreateProductForm(forms.ModelForm):
     class Meta:
         model = Product
         exclude = []
-        fields = ['title', 'description', 'price', 'quantity', 'color', 'size', 'images', 'category_id']
+        fields = ['title', 'description', 'price', 'quantity', 'color', 'size', 'images', 'category']
 
     def save(self, commit=True):
         product = super(CreateProductForm, self).save(commit=False)
@@ -63,6 +62,7 @@ class ProductEditForm(forms.ModelForm):
     class Meta:
         model = Product
         image = MultipleFileField(required=False)
+        category = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label=None, label="Категория")
         fields = ['title', 'description', 'price', 'stock_count', 'category', 'discount', 'quantity']
 
     def __init__(self, *args, **kwargs):

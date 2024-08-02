@@ -1,132 +1,32 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<!DOCTYPE html>
+<html lang="en">
 
+
+<!-- molla/404.html  22 Nov 2019 10:04:04 GMT -->
 <body>
-    <div class="page-wrapper">
         <main class="main">
             <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'empty-paht' %}">Дом</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Контакты</li>
+                        <li class="breadcrumb-item"><a href="index.html">Дом</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">404</li>
                     </ol>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
-            <div class="container">
-	        	<div class="page-header page-header-big text-center">
-        			<h1 class="page-title text-white">Связятся с нами<span class="text-white">остовайтесть всегда на связи</span></h1>
-	        	</div><!-- End .page-header -->
-            </div><!-- End .container -->
 
-            <div class="page-content pb-0">
-                <div class="container">
-                	<div class="row">
-                		<div class="col-lg-6 mb-2 mb-lg-0">
-                			<h2 class="title mb-1">Контактная Информация</h2><!-- End .title mb-2 -->
-                			<p class="mb-3">Здесть должно быть какой то текст но я не знаю  что тут написать</p>
-                			<div class="row">
-                				<div class="col-sm-7">
-                					<div class="contact-info">
-                						<h3>Наш Офис</h3>
-
-                						<ul class="contact-list">
-                							<li>
-                								<i class="icon-map-marker"></i>
-	                							Чуй 123/4
-	                						</li>
-                							<li>
-                								<i class="icon-phone"></i>
-                								<a href="tel:#">+966 706 428 666</a>
-                							</li>
-                							<li>
-                								<i class="icon-envelope"></i>
-                								<a href="mailto:#">offzet@gmail.com</a>
-                							</li>
-                						</ul><!-- End .contact-list -->
-                					</div><!-- End .contact-info -->
-                				</div><!-- End .col-sm-7 -->
-
-                				<div class="col-sm-5">
-                					<div class="contact-info">
-                						<h3>Рабочая Время</h3>
-
-                						<ul class="contact-list">
-                							<li>
-                								<i class="icon-clock-o"></i>
-	                							<span class="text-dark">Понидельника - Пятницы</span> <br>11:00-20:00
-	                						</li>
-                							<li>
-                								<i class="icon-calendar"></i>
-                								<span class="text-dark">В Субботу</span> <br>11:00-16:00
-                							</li>
-                						</ul><!-- End .contact-list -->
-                					</div><!-- End .contact-info -->
-                				</div><!-- End .col-sm-5 -->
-                			</div><!-- End .row -->
-                		</div><!-- End .col-lg-6 -->
-                	</div><!-- End .row -->
-
-                	<hr class="mt-4 mb-5">
-
-                	<div class="stores mb-4 mb-lg-5">
-	                	<h2 class="title text-center mb-3">Наши Офисы</h2><!-- End .title text-center mb-2 -->
-
-	                	<div class="row">
-	                		<div class="col-lg-6">
-	                			<div class="store">
-	                				<div class="row">
-	                					<div class="col-sm-5 col-xl-6">
-	                						<figure class="store-media mb-2 mb-lg-0">
-	                							<img src="{% static 'assets/images/stores/Office1.jpg' %}" alt="image">
-	                						</figure><!-- End .store-media -->
-	                					</div><!-- End .col-xl-6 -->
-	                					<div class="col-sm-7 col-xl-6">
-	                						<div class="store-content">
-	                							<h3 class="store-title">IT Run</h3><!-- End .store-title -->
-	                							<address>Рыскулова 79Б</address>
-	                							<div><a href="tel:#">+996 706 428 666</a></div>
-
-	                							<h4 class="store-subtitle">Часы работы магазина:</h4><!-- End .store-subtitle -->
-                								<div>С Понидельника По Пятницу 11:00-20:00</div>
-                								<div>В субботу 11:00-16:00</div>
-
-                								<a href="https://go.2gis.com/c0tcl" class="btn btn-link" target="_blank"><span>View Map</span><i class="icon-long-arrow-right"></i></a>
-	                						</div><!-- End .store-content -->
-	                					</div><!-- End .col-xl-6 -->
-	                				</div><!-- End .row -->
-	                			</div><!-- End .store -->
-	                		</div><!-- End .col-lg-6 -->
-
-	                		<div class="col-lg-6">
-	                			<div class="store">
-	                				<div class="row">
-	                					<div class="col-sm-5 col-xl-6">
-	                						<figure class="store-media mb-2 mb-lg-0">
-	                							<img src="{% static 'assets/images/stores/Office2.jpg' %}" alt="image">
-	                						</figure><!-- End .store-media -->
-	                					</div><!-- End .col-xl-6 -->
-
-	                					<div class="col-sm-7 col-xl-6">
-	                						<div class="store-content">
-	                							<h3 class="store-title">Tolopoko</h3><!-- End .store-title -->
-	                							<address>Чуй 123/6</address>
-	                							<div><a href="tel:#">+996 706 428 666</a></div>
-
-	                							<h4 class="store-subtitle">Часы работы магазина:</h4><!-- End .store-subtitle -->
-												<div>С Понидельника По Пятницу 14:00-20:00</div>
-												<div>В субботу 15:00-17:00</div>
-												<div>Воскресенье - Зактрыто</div>
-
-                								<a href="https://go.2gis.com/c0tcl" class="btn btn-link" target="_blank"><span>View Map</span><i class="icon-long-arrow-right"></i></a>
-	                						</div><!-- End .store-content -->
-	                					</div><!-- End .col-xl-6 -->
-	                				</div><!-- End .row -->
-	                			</div><!-- End .store -->
-	                		</div><!-- End .col-lg-6 -->
-	                	</div><!-- End .row -->
-                	</div><!-- End .stores -->
-            </div><!-- End .page-content -->
+        	<div class="error-content text-center">
+            	<div class="container">
+            		<h1 class="error-title">Ошибка Отмены Зказа 404</h1><!-- End .error-title -->
+            		<p>Так как товар уже в {{ order.status }}, прошу прошения</p>
+            		<a href="{% url 'empty-paht' %}" class="btn btn-outline-primary-2 btn-minwidth-lg">
+            			<span>BACK TO HOMEPAGE</span>
+            			<i class="icon-long-arrow-right"></i>
+            		</a>
+            	</div><!-- End .container -->
+        	</div><!-- End .error-content text-center -->
         </main><!-- End .main -->
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
@@ -301,88 +201,13 @@
                 <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
             </div><!-- End .social-icons -->
         </div><!-- End .mobile-menu-wrapper -->
-    </div><!-- End .mobile-menu-container -->>
-    <!-- Google Map -->
-</body>
-<style>
-        .page-header{
-        background-image:  url("{% static 'assets/images/contact-header-bg.jpg' %}")
-    } 
-</style> 
+    </div><!-- End .mobile-menu-container -->
 
-<script>
-    // JavaScript code for chat
-const chatSocket = new WebSocket(
-    'ws://' + window.location.host + '/ws/chat/'
-);
-
-chatSocket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
-    // Обработка полученных сообщений и вывод на экран
-};
-
-document.querySelector('#message-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const messageInputDom = document.querySelector('#message-input');
-    const message = messageInputDom.value;
-    chatSocket.send(JSON.stringify({
-        'message': message
-    }));
-    messageInputDom.value = '';
-});
-// JavaScript code for chat
-document.addEventListener('DOMContentLoaded', function () {
-    const userQuestionForm = document.querySelector('#user-question-form');
-
-    userQuestionForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const questionInput = document.querySelector('#user-question');
-        const question = questionInput.value;
-
-        // Отправка вопроса на сервер, например, с использованием AJAX-запроса
-        // Здесь вы можете отправить вопрос на сервер и обработать ответ, если это необходимо
-
-        // Очистка поля ввода после отправки
-        questionInput.value = '';
-    });
-});
-// JavaScript code for chat
-const chatSocket = new WebSocket(
-    'ws://' + window.location.host + '/ws/chat/'
-);
-
-chatSocket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
-    // Проверка типа сообщения (вопрос пользователя или ответ персонала)
-    if (data.type === 'user_question') {
-        // Обработка вопроса пользователя и добавление его в чат
-        const chatMessages = document.getElementById('chat-container');
-        const messageElement = document.createElement('div');
-        messageElement.textContent = 'Пользователь: ' + data.question;
-        chatMessages.appendChild(messageElement);
-    } else if (data.type === 'support_answer') {
-        // Обработка ответа персонала поддержки и добавление его в чат
-        const chatMessages = document.getElementById('chat-container');
-        const messageElement = document.createElement('div');
-        messageElement.textContent = 'Поддержка: ' + data.answer;
-        chatMessages.appendChild(messageElement);
-    }
-};
-
-document.querySelector('#user-question-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const questionInputDom = document.querySelector('#user-question');
-    const question = questionInputDom.value;
-
-    // Отправка вопроса на сервер и обработка ответа
-
-    // Вместо этого вы можете отправить вопрос на сервер и обработать ответ, если это необходимо
-
-    // Очистка поля ввода после отправки
-    questionInputDom.value = '';
-});
-
-</script>
-
+<!-- molla/404.html  22 Nov 2019 10:04:04 GMT -->
 </html>
+<style>
+    .error-content{
+        background-image: url("{% static 'assets/images/backgrounds/error-bg.jpg' %}");
+    }
+</style>
 {% endblock %}

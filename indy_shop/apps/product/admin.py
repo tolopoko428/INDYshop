@@ -39,14 +39,14 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Orders)
 class OrdersAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'total_amount', 'status', 'created_at')
+    list_display = ('get_username', 'status', 'created_at')
     list_filter = ('created_at',)
-    search_fields = ('user_id__username', 'status')
+    search_fields = ('user__email', 'status')
 
-    def user_id(self, obj):
-        return obj.user_id.username
+    def get_username(self, obj):
+        return obj.user.email if obj.user else ''
 
-    user_id.short_description = 'User'
+    get_username.short_description = 'User'
 
     actions = ['delete_selected']
 
@@ -58,24 +58,25 @@ class OrdersAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('order_id', 'order_item_id', 'quantity', 'update_at')
+    list_display = ('get_order_id', 'get_order_item_title', 'quantity', 'update_at', 'order_item_id')
     list_filter = ('update_at',)
     search_fields = ('order_id__user_id__username', 'order_item_id__title')
 
-    def order_id(self, obj):
-        return obj.order_id.id
+    def get_order_id(self, obj):
+        return obj.order_id.id if obj.order_id else ''
 
-    def order_item_id(self, obj):
-        return obj.order_item_id.title
+    def get_order_item_title(self, obj):
+        return obj.order_item_id.title if obj.order_item_id else ''
 
-    order_id.short_description = 'Order ID'
-    order_item_id.short_description = 'Order Item Title'
+    get_order_id.short_description = 'Order ID'
+    get_order_item_title.short_description = 'Order Item Title'
 
     actions = ['delete_selected']
 
     def delete_selected(self, request, queryset):
         for obj in queryset:
             obj.delete()
+
 
 
 
@@ -109,7 +110,10 @@ class AdminCartItem(admin.ModelAdmin):
     list_display = ('cart', 'product', 'quantity',)
 
 
+
 @admin.register(ShippingOption)
 class AdminShippingOption(admin.ModelAdmin):
     list_display = ('name', 'price', 'description')
+
+
 
